@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Res } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
@@ -8,42 +8,54 @@ import { Respons } from 'src/response/response';
 import { refreshTokenDTO } from './dto/refreshTokenDto.dto';
 import { TokenService } from 'src/token/token.service';
 import { loginDto } from './dto/loginDto.dto';
+import { regisrtDto } from './dto/registerDto.dto';
+import { EmailService } from 'src/email/email.service';
 const jwt = require('jsonwebtoken')
 
 @Injectable()
 export class UserService {
- 
-  constructor(@InjectModel('user') private  userModel:Model<userInterFace> , private readonly tokenService : TokenService){}
 
-  async getUserInfo(req : any , res : any){
+  constructor(@InjectModel('user') private userModel: Model<userInterFace>, private readonly tokenService: TokenService, private readonly emailService: EmailService) { }
+
+
+
+  async #generateNumber(): Promise<number> {
+    let randomNumber = Math.floor(1000 + Math.random() * 9000);
+    return randomNumber
+  }
+
+
+
+
+  async getUserInfo(req: any, res: any) {
     const userId = req.user._id
     const user = await this.userModel.findById(userId)
-    return new Respons(req , res , 200 , 'get user info' , 'getting user info' , null , user)
+    return new Respons(req, res, 200, 'get user info', 'getting user info', null, user)
   }
 
 
 
-  async checkToken(req : any , res : any){
+  async checkToken(req: any, res: any) {
     const userData = await this.userModel.findById(req.user._id)
-    return new Respons(req, res, 200, 'checking user token', 'check token' ,null, { user: userData})
+    return new Respons(req, res, 200, 'checking user token', 'check token', null, { user: userData })
   }
 
 
-  async refreshToken(req:any , res:any , body : refreshTokenDTO){
+  async refreshToken(req: any, res: any, body: refreshTokenDTO) {
     const token = body.refreshToken;
     console.log(body)
     try {
       const decoded = jwt.verify(token, process.env.REFRESH_SECRET_KEY)
       if (!decoded) {
         console.log('111')
-        return new Respons(req, res, 401, 'get new token!!' ,'this token is expired', 'refresh token expired', null)
+        return new Respons(req, res, 401, 'get new token!!', 'this token is expired', 'refresh token expired', null)
       }
 
       const user = await this.userModel.findOne({ email: decoded.userData.email })
 
       if (!user) {
         console.log('222')
-        return new Respons(req, res, 401, 'get new token!!', 'this token is not valid' ,'refresh token expired', null)
+        return new Respons(req, res, 401, 'get new token!!', 'this token is not valid', 'refresh token expired', null)
       }
       const userData = {
         _id: user._id,
@@ -58,29 +70,29 @@ export class UserService {
         leaders: user.leaders
       }
       const Token = await this.tokenService.tokenize(userData)
-      const refreshToken = await this.tokenService.refreshToken({email : user.email})
-      let newData = {...user.toObject() , token : token , refreshToken : refreshToken}
-      return new Respons(req, res, 200, 'get new token by refresh token!!!', 'the token has been successfully refreshed!',null,newData)
+      const refreshToken = await this.tokenService.refreshToken({ email: user.email })
+      let newData = { ...user.toObject(), token: token, refreshToken: refreshToken }
+      return new Respons(req, res, 200, 'get new token by refresh token!!!', 'the token has been successfully refreshed!', null, newData)
     } catch (error) {
       console.log(error)
-      return new Respons(req, res, 401, 'get new token!!', 'this token is not valid' ,'refresh token expired', null)
+      return new Respons(req, res, 401, 'get new token!!', 'this token is not valid', 'refresh token expired', null)
     }
   }
 
 
 
 
-  async loginUser(req : any, res:any , body : loginDto) {
-    // console.log(body)
+  async loginUser(req: any, res: any, body: loginDto) {
 
-    const user = await this.userModel.findOne({email : body.email}).select(['-refreshToken'])
+
+    const user = await this.userModel.findOne({ email: body.email }).select(['-refreshToken'])
     if (!user) {
-      return new Respons(req, res, 404, 'loging in user', 'login user failed' ,'this user is not exist in the database', null)
+      return new Respons(req, res, 404, 'loging in user', 'login user failed', 'this user is not exist in the database', null)
     }
     const hashedPassword = await this.tokenService.passwordHasher(body.password)
 
     if (hashedPassword != user.password) {
-      return new Respons(req, res, 403, 'loging in user', 'login user failed' ,'the password is incorrect!!!', null)
+      return new Respons(req, res, 403, 'loging in user', 'login user failed', 'the password is incorrect!!!', null)
     }
     const userData = {
       _id: user._id,
@@ -95,13 +107,86 @@ export class UserService {
       leaders: user.leaders
     }
     const token = await this.tokenService.tokenize(userData)
-    const refreshToken = await this.tokenService.refreshToken({email : user.email})
-    const newData = {...(user.toObject()) , token : token , refreshToken : refreshToken}
-    
+    const refreshToken = await this.tokenService.refreshToken({ email: user.email })
+    const newData = { ...(user.toObject()), token: token, refreshToken: refreshToken }
+
     delete newData.password
-    return new Respons(req, res, 200, 'loging in user', 'user login successfull' ,null, newData)
+    return new Respons(req, res, 200, 'loging in user', 'user login successfull', null, newData)
 
   }
+
+
+
+  async register(req: any, res: any, body: regisrtDto) {
+    try {
+      const existance = await this.userModel.findOne({ email: body.email })
+      if (existance) {
+        if (existance.usingCode) {
+          return new Respons(req, res, 409, 'regsiter new user', 'this email had been already registere', 'existance email', null)
+        }
+        const code = await this.#generateNumber()
+        const hashedPassword = await this.tokenService.passwordHasher(body.password)
+        // let userData = {...existance , ...body ,code : code , password : hashedPassword }
+        existance.password = hashedPassword;
+        existance.code = code;
+        existance.usingCode = false;
+        await this.emailService.sendEmail(code, body.email)               // for sending email for validating the emmail address
+        const currentTime = new Date().getTime();
+        existance.otpCodeTime = currentTime;
+        await existance.save()
+        return new Respons(req, res, 200, 'code sent to user', 'the code sent to user email successfully. . .  ', null, { email: body.email, code: code })
+      }
+      const code = await this.#generateNumber()
+      const hashedPassword = await this.tokenService.passwordHasher(body.password)
+      let data = { ...body, password: hashedPassword, code: code, otoCodeTime: 0 }
+      await this.emailService.sendEmail(code, body.email)
+      let currentTime = new Date().getTime()
+      data.otoCodeTime = currentTime;
+      await this.userModel.create(data)
+
+      return new Respons(req, res, 200, 'code sent to user', 'the code sent to user email successfully. . .  ', null, { email: body.email, code: code })
+
+    } catch (error) {
+      console.log('error occured', error)
+      return new Respons(req, res, 500, 'code sent to user', 'the code did not sent to user email successfully. . .  ', `${error}`, null)
+    }
+  }
+
+
+  async checkOtpCode(req: any, res: any, code: number, email: string) {
+    const existinguser = await this.userModel.findOne({ email: email })
+    if (!existinguser) {
+      return new Respons(req, res, 404, 'check otp code', 'please registere first', `this email did not rigistered.`, null)
+    }
+    if (existinguser.code != code) {
+      return new Respons(req, res, 422, 'check otp code', 'the code is not valid', `wrong otp code`, null)
+    }
+    let currentTime = new Date().getTime()
+    if ((currentTime - existinguser.otpCodeTime) > 2.5 * 60 * 1000) {
+      return new Respons(req, res, 403, 'check otp code', 'the time limit of otp code exceeded', 'time limit exceeded', null)
+    }
+    existinguser.usingCode = true;
+    existinguser.otpCodeTime = 0;
+    await existinguser.save()
+    const user = await this.userModel.findById(existinguser._id).select(['-password'])
+    const userData = {
+      _id: user._id,
+      username: user.username,
+      role: user.role,
+      suspend: user.suspend,
+      email: user.email,
+      wallet: user.wallet,
+      region: user.region,
+      profile: user.profile,
+      level: user.level,
+      leaders: user.leaders
+    }
+    const token = await this.tokenService.tokenize(userData)
+    const refreshToken = await this.tokenService.refreshToken({ email: user.email })
+    let newData = { ...user, token: token, refreshToken: refreshToken }
+    return new Respons(req, res, 200, 'check otp code', 'the code validation succeed', null, newData)
+  }
+  
 
 
 

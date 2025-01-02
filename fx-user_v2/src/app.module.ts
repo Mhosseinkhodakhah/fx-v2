@@ -8,11 +8,12 @@ import { subScribers } from './user/entities/subscribers.entity';
 import { auth } from './auth/auth.middleware';
 import { ConfigService, ConfigModule } from '@nestjs/config'
 import { TokenService } from './token/token.service';
+import { EmailService } from './email/email.service';
 
 @Module({
   imports: [UserModule , MongooseModule.forRoot('mongodb+srv://kianlucifer0098:lucifer25255225@cluster0.p5b71z1.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0') ,MongooseModule.forFeature([{ name: 'user', schema: UserSchema }, { name: 'subscribers', schema: subScribers }]) , ConfigModule.forRoot({ envFilePath: 'config.env', isGlobal: true })],
   controllers: [AppController],
-  providers: [AppService, TokenService],
+  providers: [AppService, TokenService, EmailService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
