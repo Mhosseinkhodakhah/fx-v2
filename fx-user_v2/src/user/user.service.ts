@@ -60,7 +60,7 @@ export class UserService {
       let newData = {...user.toObject() , token : token , refreshToken : refreshToken}
       return new Respons(req, res, 200, 'get new token by refresh token!!!', 'the token has been successfully refreshed!',null,newData)
     } catch (error) {
-      console.log('333')
+      console.log(error)
       return new Respons(req, res, 401, 'get new token!!', 'this token is not valid' ,'refresh token expired', null)
     }
   }
@@ -95,6 +95,7 @@ export class UserService {
     const token = await this.tokenService.tokenize(userData)
     const refreshToken = await this.tokenService.refreshToken({email : user.email})
     const newData = {...(user.toObject()) , token : token , refreshToken : refreshToken}
+    
     delete newData.password
     return new Respons(req, res, 200, 'loging in user', 'user login successfull' ,null, newData)
 
