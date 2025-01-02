@@ -34,11 +34,13 @@ export class UserService {
     try {
       const decoded = jwt.verify(token, process.env.REFRESH_SECRET_KEY)
       if (!decoded) {
+        console.log('111')
         return new Respons(req, res, 401, 'get new token!!' ,'this token is expired', 'refresh token expired', null)
       }
       const user = await this.userModel.findOne({ email: decoded.userData })
 
       if (!user) {
+        console.log('222')
         return new Respons(req, res, 401, 'get new token!!', 'this token is not valid' ,'refresh token expired', null)
       }
       const userData = {
@@ -58,6 +60,7 @@ export class UserService {
       let newData = {...user.toObject() , token : token , refreshToken : refreshToken}
       return new Respons(req, res, 200, 'get new token by refresh token!!!', 'the token has been successfully refreshed!',null,newData)
     } catch (error) {
+      console.log('333')
       return new Respons(req, res, 401, 'get new token!!', 'this token is not valid' ,'refresh token expired', null)
     }
   }
