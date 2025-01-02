@@ -16,6 +16,9 @@ import { TokenService } from './token/token.service';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(auth).forRoutes({path : '/user/info' , method : RequestMethod.GET})
+    consumer.apply(auth).forRoutes({path : '/user/info' , method : RequestMethod.GET},
+      {path : '/user/token/check' , method : RequestMethod.GET},
+      {path : '/user/token/refresh' , method : RequestMethod.POST}
+    )
   }
 }
