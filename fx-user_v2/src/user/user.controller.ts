@@ -24,4 +24,10 @@ export class UserController {
     return this.userService.refreshToken(req , res , body)
   }
 
+
+  @Post('/login')
+  loginUser(@Req() req : any , @Res() res : any , @Body() body){
+
+  }
+
 }
