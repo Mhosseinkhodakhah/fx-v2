@@ -5,12 +5,14 @@ import { InjectModel } from '@nestjs/mongoose';
 import { userInterFace } from './entities/user.entity';
 import { Model } from "mongoose";
 import { Respons } from 'src/response/response';
-
+import { refreshTokenDTO } from './dto/refreshTokenDto.dto';
+import { TokenService } from 'src/token/token.service';
+const jwt = require('jsonwebtoken')
 
 @Injectable()
 export class UserService {
  
-  constructor(@InjectModel('user') private  userModel:Model<userInterFace>){}
+  constructor(@InjectModel('user') private  userModel:Model<userInterFace> , private readonly tokenService : TokenService){}
 
   async getUserInfo(req : any , res : any){
     const userId = req.user._id
@@ -18,5 +20,48 @@ export class UserService {
     return new Respons(req , res , 200 , 'get user info' , 'getting user info' , null , user)
   }
 
+
+
+  async checkToken(req : any , res : any){
+    const userData = await this.userModel.findById(req.user._id)
+    return new Respons(req, res, 200, 'checking user token', 'check token' ,null, { user: userData})
+  }
+
+
+  async refreshToken(req:any , res:any , body : refreshTokenDTO){
+    const token = body.refreshToken;
+    try {
+      const decoded = jwt.verify(token, process.env.REFRESH_SECRET_KEY)
+      if (!decoded) {
+        return new Respons(req, res, 401, 'get new token!!' ,'this token is expired', 'refresh token expired', null)
+      }
+      const user = await this.userModel.findOne({ email: decoded.userData })
+
+      if (!user) {
+        return new Respons(req, res, 401, 'get new token!!', 'this token is not valid' ,'refresh token expired', null)
+      }
+      const userData = {
+        _id: user._id,
+        username: user.username,
+        role: user.role,
+        suspend: user.suspend,
+        email: user.email,
+        wallet: user.wallet,
+        region: user.region,
+        profile: user.profile,
+        level: user.level,
+        leaders: user.leaders
+      }
+      const Token = await this.tokenService.tokenize(userData)
+      const refreshToken = await this.tokenService.refreshToken({email : user.email})
+      return new Respons(req, res, 200, 'get new token by refresh token!!!', 'the token has been successfully refreshed!',null, {
+        token: Token,
+        refreshToken: refreshToken,
+        user: user
+      })
+    } catch (error) {
+      return new Respons(req, res, 401, 'get new token!!', 'this token is not valid' ,'refresh token expired', null)
+    }
+  }
 
 }
