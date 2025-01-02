@@ -96,7 +96,6 @@ export class UserService {
     const refreshToken = await this.tokenService.refreshToken({email : user.email})
     const newData = {...(user.toObject()) , token : token , refreshToken : refreshToken}
     delete newData.password
-    delete newData.refreshToken
     return new Respons(req, res, 200, 'loging in user', 'user login successfull' ,null, newData)
 
   }
