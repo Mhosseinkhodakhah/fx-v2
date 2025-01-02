@@ -83,8 +83,6 @@ export class UserService {
 
 
   async loginUser(req: any, res: any, body: loginDto) {
-
-
     const user = await this.userModel.findOne({ email: body.email }).select(['-refreshToken'])
     if (!user) {
       return new Respons(req, res, 404, 'loging in user', 'login user failed', 'this user is not exist in the database', null)
@@ -115,6 +113,42 @@ export class UserService {
 
   }
 
+
+  async forgetPassword(req : any, res : any , userEmail : string){
+    try {
+      const user = await this.userModel.findOne({ email: userEmail })
+      if (!user) {
+        return new Respons(req, res, 404, 'getting reset token' ,'this user is not exist on database!!!', 'no account found' ,null)
+      }
+      const resetToken = await this.#generateNumber()
+      user.resetPasswordToken = resetToken.toString()
+      user.resetTokenExpire = ((new Date().getSeconds()) + (24 * 3600)).toString()
+      user.save()
+      await this.emailService.sendResetPasswordEmail(resetToken.toString(), user.email, user.username)
+      return new Respons(req, res, 200, 'getting reset token' ,'reset password token sendt to user email!!!' ,null, { resetToken: resetToken })
+
+    } catch (error) {
+      return new Respons(req, res, 500,'getting reset token' ,'connecting to database on geting reset password failed!!', `${error}`, null)
+    }
+  }
+
+
+  async resetPasswordWithToken(resetToken: string, userEmail: string, req : any, res : any) {
+    const user = await this.userModel.findOne({ email: userEmail }).select(['-password', '-refreshToken'])
+    console.log(user)
+    if (!user) {
+      return new Respons(req, res, 404, 'reset password' ,'reset password with reset token!!', 'this user is not exist on database!!!', null)
+    }
+
+    if (user.resetPasswordToken != resetToken ){
+      return new Respons(req, res, 422 , 'reset password' ,'reset password with reset token failed', 'the reset password code is not valid', null)
+    }
+
+    if ((parseInt(user.resetTokenExpire) - (new Date().getSeconds())) <= 0) {
+      return new Respons(req, res, 422 , 'reset password' ,'reset password with reset token failed', 'the reset token expired!!!!try again!!!', null)
+    }
+    return new Respons(req, res, 200, 'reset password' ,'reset password with reset token!! successfull', null , user)
+  }
 
 
   async register(req: any, res: any, body: regisrtDto) {
