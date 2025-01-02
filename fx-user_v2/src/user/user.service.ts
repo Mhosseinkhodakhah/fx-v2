@@ -10,6 +10,7 @@ import { TokenService } from 'src/token/token.service';
 import { loginDto } from './dto/loginDto.dto';
 import { regisrtDto } from './dto/registerDto.dto';
 import { EmailService } from 'src/email/email.service';
+import { passwordBody } from './dto/passwordDto.dto';
 const jwt = require('jsonwebtoken')
 
 @Injectable()
@@ -131,6 +132,20 @@ export class UserService {
       return new Respons(req, res, 500,'getting reset token' ,'connecting to database on geting reset password failed!!', `${error}`, null)
     }
   }
+
+
+  
+  async finalResetPasswor(req: any, res: any, body: passwordBody , userEmail :string) {
+    const user = await this.userModel.findOne({ email: userEmail }).select(['-password' , '-refreshToken'])
+    if (!user) {
+      return new Respons(req, res, 404, 'finalResetPassword', 'this email is not exist on database','account not found!', null)
+    }
+    let password = await this.tokenService.passwordHasher(body.password)
+    user.password = password;
+    await user.save()
+    return new Respons(req, res, 200, 'finalResetPassword','the password successfully updated' , null , {email : user.email})
+  }
+
 
 
   async resetPasswordWithToken(resetToken: string, userEmail: string, req : any, res : any) {
