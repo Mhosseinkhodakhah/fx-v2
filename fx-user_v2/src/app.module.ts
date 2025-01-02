@@ -9,9 +9,22 @@ import { auth } from './auth/auth.middleware';
 import { ConfigService, ConfigModule } from '@nestjs/config'
 import { TokenService } from './token/token.service';
 import { EmailService } from './email/email.service';
+import { MailerModule } from '@nestjs-modules/mailer';
 
 @Module({
-  imports: [UserModule , MongooseModule.forRoot('mongodb+srv://kianlucifer0098:lucifer25255225@cluster0.p5b71z1.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0') ,MongooseModule.forFeature([{ name: 'user', schema: UserSchema }, { name: 'subscribers', schema: subScribers }]) , ConfigModule.forRoot({ envFilePath: 'config.env', isGlobal: true })],
+  imports: [UserModule ,
+    MailerModule.forRoot({
+      transport: {
+        host: 'smtp.gmail.com',
+        port: 465,
+        secure: true,
+        auth: {
+          user: 'kianlucifer0098@gmail.com',
+          pass: 'cnno pezo wooi qkpl',
+        },
+      },
+    })
+    ,MongooseModule.forRoot('mongodb+srv://kianlucifer0098:lucifer25255225@cluster0.p5b71z1.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0') ,MongooseModule.forFeature([{ name: 'user', schema: UserSchema }, { name: 'subscribers', schema: subScribers }]) , ConfigModule.forRoot({ envFilePath: 'config.env', isGlobal: true })],
   controllers: [AppController],
   providers: [AppService, TokenService, EmailService],
 })
