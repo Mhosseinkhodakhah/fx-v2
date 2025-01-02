@@ -64,4 +64,39 @@ export class UserService {
     }
   }
 
+
+
+
+  async loginUser(body: Request, req, res) {
+    // console.log(body)
+    this.userModel.findOne({ email: body['email'] }).then(async (resault) => {
+      if (!resault) {
+        return new Respons(req, res, 404, 'loging in user', 'login user failed' ,'this user is not exist in the database', null)
+      }
+      const hashedPassword = await this.tokenService.passwordHasher(body['password'])
+
+      if (hashedPassword != resault.password) {
+        return new Respons(req, res, 403, 'loging in user', 'login user failed' ,'the password is incorrect!!!', null)
+      }
+      const userData = {
+        _id: resault._id,
+        username: resault.username,
+        role: resault.role,
+        suspend: resault.suspend,
+        email: resault.email,
+        wallet: resault.wallet,
+        region: resault.region,
+        profile: resault.profile,
+        level: resault.level,
+        leaders: resault.leaders
+      }
+      const token = await this.tokenService.tokenize(userData)
+      const refreshToken = await this.tokenService.refreshToken({email : resault.email})
+
+      return new Respons(req, res, 200, 'loging in user', 'user login successfull' ,null, { token: token, refreshToken: refreshToken, user: resault, walletBalance: 0 })
+    })
+  }
+
+
+
 }
