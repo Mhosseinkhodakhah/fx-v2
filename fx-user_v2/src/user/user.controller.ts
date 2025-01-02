@@ -40,7 +40,7 @@ export class UserController {
 
   @Patch('resetPassword/:resetToken/:userEmail')
   resetPassword(@Param('resetToken') resetToken: string, @Param('userEmail') userEmail: string, @Req() req:any, @Res() res : any){
-    
+    return this.userService.resetPasswordWithToken(resetToken , userEmail , req , res)
   }
 
   @Get('/info')
