@@ -31,6 +31,7 @@ export class UserService {
 
   async refreshToken(req:any , res:any , body : refreshTokenDTO){
     const token = body.refreshToken;
+    console.log(body)
     try {
       const decoded = jwt.verify(token, process.env.REFRESH_SECRET_KEY)
       if (!decoded) {
@@ -71,7 +72,7 @@ export class UserService {
   async loginUser(req : any, res:any , body : loginDto) {
     // console.log(body)
 
-    const user = await this.userModel.findOne({email : body.email})
+    const user = await this.userModel.findOne({email : body.email}).select(['-refreshToken'])
     if (!user) {
       return new Respons(req, res, 404, 'loging in user', 'login user failed' ,'this user is not exist in the database', null)
     }
