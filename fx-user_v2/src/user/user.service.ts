@@ -7,6 +7,7 @@ import { Model } from "mongoose";
 import { Respons } from 'src/response/response';
 import { refreshTokenDTO } from './dto/refreshTokenDto.dto';
 import { TokenService } from 'src/token/token.service';
+import { loginDto } from './dto/loginDto.dto';
 const jwt = require('jsonwebtoken')
 
 @Injectable()
@@ -67,13 +68,13 @@ export class UserService {
 
 
 
-  async loginUser(body: Request, req, res) {
+  async loginUser(req : any, res:any , body : loginDto) {
     // console.log(body)
-    this.userModel.findOne({ email: body['email'] }).then(async (resault) => {
+    this.userModel.findOne({ email: body.email }).then(async (resault) => {
       if (!resault) {
         return new Respons(req, res, 404, 'loging in user', 'login user failed' ,'this user is not exist in the database', null)
       }
-      const hashedPassword = await this.tokenService.passwordHasher(body['password'])
+      const hashedPassword = await this.tokenService.passwordHasher(body.password)
 
       if (hashedPassword != resault.password) {
         return new Respons(req, res, 403, 'loging in user', 'login user failed' ,'the password is incorrect!!!', null)
