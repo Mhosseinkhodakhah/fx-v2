@@ -70,32 +70,35 @@ export class UserService {
 
   async loginUser(req : any, res:any , body : loginDto) {
     // console.log(body)
-    this.userModel.findOne({ email: body.email }).then(async (resault) => {
-      if (!resault) {
-        return new Respons(req, res, 404, 'loging in user', 'login user failed' ,'this user is not exist in the database', null)
-      }
-      const hashedPassword = await this.tokenService.passwordHasher(body.password)
 
-      if (hashedPassword != resault.password) {
-        return new Respons(req, res, 403, 'loging in user', 'login user failed' ,'the password is incorrect!!!', null)
-      }
-      const userData = {
-        _id: resault._id,
-        username: resault.username,
-        role: resault.role,
-        suspend: resault.suspend,
-        email: resault.email,
-        wallet: resault.wallet,
-        region: resault.region,
-        profile: resault.profile,
-        level: resault.level,
-        leaders: resault.leaders
-      }
-      const token = await this.tokenService.tokenize(userData)
-      const refreshToken = await this.tokenService.refreshToken({email : resault.email})
+    const user = await this.userModel.findOne({email : body.email})
+    if (!user) {
+      return new Respons(req, res, 404, 'loging in user', 'login user failed' ,'this user is not exist in the database', null)
+    }
+    const hashedPassword = await this.tokenService.passwordHasher(body.password)
 
-      return new Respons(req, res, 200, 'loging in user', 'user login successfull' ,null, { token: token, refreshToken: refreshToken, user: resault, walletBalance: 0 })
-    })
+    if (hashedPassword != user.password) {
+      return new Respons(req, res, 403, 'loging in user', 'login user failed' ,'the password is incorrect!!!', null)
+    }
+    const userData = {
+      _id: user._id,
+      username: user.username,
+      role: user.role,
+      suspend: user.suspend,
+      email: user.email,
+      wallet: user.wallet,
+      region: user.region,
+      profile: user.profile,
+      level: user.level,
+      leaders: user.leaders
+    }
+    const token = await this.tokenService.tokenize(userData)
+    const refreshToken = await this.tokenService.refreshToken({email : user.email})
+    const newData = {...(user.toObject()) , token : token , refreshToken : refreshToken}
+    delete newData.password
+    delete newData.refreshToken
+    return new Respons(req, res, 200, 'loging in user', 'user login successfull' ,null, newData)
+
   }
 
 
