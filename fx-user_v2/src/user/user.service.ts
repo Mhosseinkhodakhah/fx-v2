@@ -31,6 +31,7 @@ export class UserService {
 
   async refreshToken(req:any , res:any , body : refreshTokenDTO){
     const token = body.refreshToken;
+    console.log(body)
     try {
       const decoded = jwt.verify(token, process.env.REFRESH_SECRET_KEY)
       if (!decoded) {
