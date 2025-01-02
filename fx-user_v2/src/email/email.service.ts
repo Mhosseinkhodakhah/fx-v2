@@ -5,13 +5,7 @@ import { Injectable } from '@nestjs/common';
 @Injectable()
 export class EmailService {
 
-    constructor(private readonly mailService: MailerService) { }
-
-
-
-
-
-
+    constructor(private readonly mailService: MailerService) {}
     private async getPage(code: string) {
         return `<!DOCTYPE html>
    <html>
