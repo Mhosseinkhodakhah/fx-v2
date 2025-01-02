@@ -5,6 +5,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { refreshTokenDTO } from './dto/refreshTokenDto.dto';
 import { loginDto } from './dto/loginDto.dto';
 import { regisrtDto } from './dto/registerDto.dto';
+import { passwordBody } from './dto/passwordDto.dto';
 
 
 
@@ -32,13 +33,19 @@ export class UserController {
   }
   
 
-  @Get('forgetPassword/:userEmail')
+  @Get('/forgetPassword/:userEmail')
   forgetPassword(@Req() req: any, @Res() res: any,@Param('userEmail') userEmail : string){
     return this.userService.forgetPassword(req , res , userEmail)
   }
 
 
-  @Patch('resetPassword/:resetToken/:userEmail')
+  @Patch('/password/set/:userEmail')
+  finalResetPassword(@Req() req:any, @Res() res:any , @Body() body : passwordBody , @Param('userEmail') userEmail : string){
+    return this.userService.finalResetPasswor(req , res , body , userEmail)
+  }
+
+
+  @Patch('/resetPassword/:resetToken/:userEmail')
   resetPassword(@Param('resetToken') resetToken: string, @Param('userEmail') userEmail: string, @Req() req:any, @Res() res : any){
     return this.userService.resetPasswordWithToken(resetToken , userEmail , req , res)
   }
