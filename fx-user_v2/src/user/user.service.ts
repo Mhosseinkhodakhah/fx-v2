@@ -38,7 +38,8 @@ export class UserService {
         console.log('111')
         return new Respons(req, res, 401, 'get new token!!' ,'this token is expired', 'refresh token expired', null)
       }
-      const user = await this.userModel.findOne({ email: decoded.userData })
+
+      const user = await this.userModel.findOne({ email: decoded.userData.email })
 
       if (!user) {
         console.log('222')
