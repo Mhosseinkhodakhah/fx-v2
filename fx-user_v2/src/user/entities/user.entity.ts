@@ -28,14 +28,15 @@ export interface userInterFace extends Document {
     approvationData: object
     leaderRequestTime: string
     license: string
-    readonly usingCode: boolean
+    usingCode: boolean
     leaders: []
     discount :[]
     points : number
-    readonly refreshToken : string
-    readonly historyUser : [];
-    readonly followings: { id: string }[]
-    readonly followers: { id: string }[]
+    refreshToken : string
+    historyUser : [];
+    followings: { id: string }[]
+    followers: { id: string }[]
+    otpCodeTime : number
 }
 
 
@@ -62,7 +63,7 @@ export class Student {
     @Prop({ type: String })
     leaderRequestTime: string
 
-    @Prop({ type: Number })
+    @Prop({ type: Number , default : 0 })
     role: number;                    // 0 : base user   // 1: completed user // 2 : base leader // 3 : approved leader   // 4 : rejected leader
 
     @Prop({ type: Number })
@@ -76,6 +77,11 @@ export class Student {
 
     @Prop({ type: Boolean, default: false })
     usingCode: boolean;
+
+
+    @Prop({type : Number , default : 0})
+    otpCodeTime : number
+
 
     @Prop()
     firstName: string;
