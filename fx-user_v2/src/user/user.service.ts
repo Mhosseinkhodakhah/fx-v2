@@ -83,7 +83,7 @@ export class UserService {
       const Token = await this.tokenService.tokenize(userData)
       const refreshToken = await this.tokenService.refreshToken({ email: user.email })
       console.log('token is this . . .' , Token)
-      let newData = { ...user.toObject(), token: token, refreshToken: refreshToken }
+      let newData = { ...user.toObject(), token: Token, refreshToken: refreshToken }
       return new Respons(req, res, 200, 'get new token by refresh token!!!', 'the token has been successfully refreshed!', null, newData)
     } catch (error) {
       console.log(error)
