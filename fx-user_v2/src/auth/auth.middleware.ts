@@ -11,7 +11,7 @@ const jwt = require('jsonwebtoken')
 export class auth implements NestMiddleware {
   constructor(@InjectModel('user') private readonly userModel :Model<userInterFace>){}
   use(req: any, res: any, next: () => void) {
-    // console.log(req.headers)
+    console.log('its here . . .')
     let token;
 
   if (
@@ -22,23 +22,28 @@ export class auth implements NestMiddleware {
     token = req.headers.authorization.split(" ")[1];
   }
 
-  // console.log(token)
-
+  
   if (!token) {
-      return new Respons(req , res , 401 , 'user authorization' , 'authorize user' , 'token Expired!' , null)
+    return new Respons(req , res , 401 , 'user authorization' , 'authorize user' , 'token Expired!' , null)
   }
+
+  console.log('level 2 for token . . .' , token)
   
   try {
     // Verify token
+    console.log('verifying token . . .')
     const decoded = jwt.verify(token, process.env.SECRET_KEY );   
 
     if (!decoded) {
+      console.log('error one . . .' , decoded)
       return new Respons(req , res , 401 , 'user authorization' , 'authorize user' , 'token Expired!' , null)
     }
     
     req.user = decoded.userData;
+    console.log(req.user)
     next();
   } catch (err) {
+    console.log('catch error . . .' , err)
     return new Respons(req , res , 401 , 'user authorization' , 'authorize user' , 'token Expired!' , null)
   
   }
