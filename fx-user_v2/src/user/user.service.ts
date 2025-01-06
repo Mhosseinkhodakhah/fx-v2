@@ -176,6 +176,16 @@ export class UserService {
   }
 
 
+
+  async updateUser(req : any , res  : any , body : any){
+    const userId = req.user._id;
+    const user = await this.userModel.findById(userId).select(['-password' , '-refreshToken'])
+    let newData = {...user.toObject() , ...body}
+    await user.updateOne(newData)
+    return new Respons(req , res , 200 , 'update user' , 'updating user successfully done!' , null , newData)
+  }
+
+
   async register(req: any, res: any, body: regisrtDto) {
     try {
       const existance = await this.userModel.findOne({ email: body.email })

@@ -50,6 +50,11 @@ export class UserController {
     return this.userService.resetPasswordWithToken(resetToken , userEmail , req , res)
   }
 
+  @Put('/update')
+  updateUser(@Req() req:any, @Res() res : any , @Body() body : any){
+    return this.userService.updateUser(req , res , body)
+  }
+
   @Get('/info')
   getUserInfo(@Req() req: any, @Res() res: any) {
     return this.userService.getUserInfo(req, res)

@@ -34,6 +34,7 @@ export class AppModule implements NestModule {
     consumer.apply(auth).forRoutes({path : '/user/info' , method : RequestMethod.GET},
       {path : '/user/token/check' , method : RequestMethod.GET},
       {path : '/user/home/info' , method : RequestMethod.GET},
+      {path : '/user/update' , method : RequestMethod.PUT},
     )
   }
 }
