@@ -11,12 +11,13 @@ import { loginDto } from './dto/loginDto.dto';
 import { regisrtDto } from './dto/registerDto.dto';
 import { EmailService } from 'src/email/email.service';
 import { passwordBody } from './dto/passwordDto.dto';
+import { InterconnectionService } from 'src/interconnection/interconnection.service';
 const jwt = require('jsonwebtoken')
 
 @Injectable()
 export class UserService {
 
-  constructor(@InjectModel('user') private userModel: Model<userInterFace>, private readonly tokenService: TokenService, private readonly emailService: EmailService) { }
+  constructor(private readonly interConnection : InterconnectionService,@InjectModel('user') private userModel: Model<userInterFace>, private readonly tokenService: TokenService, private readonly emailService: EmailService) { }
 
 
 
@@ -32,6 +33,15 @@ export class UserService {
     const userId = req.user._id
     const user = await this.userModel.findById(userId)
     return new Respons(req, res, 200, 'get user info', 'getting user info', null, user)
+  }
+
+
+  async getHomePageInfo(req : any , res : any){
+    const userId = req.user._id;
+    // const leaders = await this.userModel.find({$and:[{role : 3} , {subScriber : {$in : userId}}]})
+    const leaders = await this.userModel.find({role : 3}).limit(4).select(['-password' , '-refreshToken'])
+    const transActions = await this.interConnection.getAllUserTransAction(userId)
+    return new Respons(req, res, 200, 'get user info', 'getting user info', null, {leaders : leaders , transActions : transActions.data})
   }
 
 

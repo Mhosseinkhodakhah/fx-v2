@@ -56,6 +56,11 @@ export class UserController {
   }
 
 
+  @Get('/home/info')
+  homePage(@Req() req: any, @Res() res: any) {
+    return this.userService.getHomePageInfo(req , res)
+  }
+
   @Get('/token/check')
   checkToken(@Req() req: any, @Res() res: any) {
     return this.userService.checkToken(req, res)
