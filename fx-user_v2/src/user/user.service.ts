@@ -179,6 +179,7 @@ export class UserService {
 
   async updateUser(req : any , res  : any , body : any){
     const userId = req.user._id;
+    console.log(body)
     const user = await this.userModel.findById(userId).select(['-password' , '-refreshToken'])
     let newData = {...user.toObject() , ...body}
     await user.updateOne(newData)
