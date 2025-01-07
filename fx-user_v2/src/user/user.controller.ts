@@ -81,6 +81,11 @@ export class UserController {
   }
 
 
+  @Get('/leader/:leaderId')
+  getLeaderData(@Req() req: any, @Res() res: any , @Param('leaderId') leaderId : string){
+    return this.userService.getLeaderData(req , res , leaderId)
+  }
+
 
   @Get('/info')
   getUserInfo(@Req() req: any, @Res() res: any) {

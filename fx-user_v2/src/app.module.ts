@@ -37,6 +37,8 @@ export class AppModule implements NestModule {
       {path : '/user/token/check' , method : RequestMethod.GET},
       {path : '/user/home/info' , method : RequestMethod.GET},
       {path : '/user/update' , method : RequestMethod.PUT},
+      {path : '/user/upload/profile' , method : RequestMethod.POST},
+      {path : '/user/leader/:leaderId' , method : RequestMethod.GET}
     )
   }
 }
