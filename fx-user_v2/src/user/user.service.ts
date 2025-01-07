@@ -197,6 +197,7 @@ export class UserService {
 
 
 
+
   async register(req: any, res: any, body: regisrtDto) {
     try {
       const existance = await this.userModel.findOne({ email: body.email })
@@ -267,6 +268,19 @@ export class UserService {
     return new Respons(req, res, 200, 'check otp code', 'the code validation succeed', null, newData)
   }
   
+
+
+  async getLeaderData(req : any , res : any , leaderId : string){
+    try {
+      const leader = await this.userModel.findById(leaderId).select(['-password' , '-refreshToken']).populate({
+        path : 'subScriber',
+      }).populate({path : 'followers'})
+      return new Respons(req , res , 200 , 'get leader data' , 'leader data' , null , leader)
+  
+    } catch (error) {
+      return new Respons(req , res , 500 , 'get leader data' , 'getting leader data failed' , `${error}` , null)
+    }
+  }
 
 
 
