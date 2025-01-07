@@ -188,6 +188,15 @@ export class UserService {
   }
 
 
+  async uploadPictureProfile(req, res, filename: string) {
+    const newPath = `https://cdn.spider-cryptobot.site/profiles/${filename}`
+    await this.userModel.findByIdAndUpdate(req.user._id, { profile: newPath })
+    const updated = await this.userModel.findById(req.user._id)
+    return new Respons(req, res, 200, 'uploading profile', 'the profile successfully updated . . .' ,null, { path: newPath })
+  }
+
+
+
   async register(req: any, res: any, body: regisrtDto) {
     try {
       const existance = await this.userModel.findOne({ email: body.email })

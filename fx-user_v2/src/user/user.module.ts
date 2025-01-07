@@ -8,9 +8,11 @@ import { TokenService } from 'src/token/token.service';
 import { EmailService } from 'src/email/email.service';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { InterconnectionService } from 'src/interconnection/interconnection.service';
+import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
   imports : [
+    MulterModule.register({ dest: '/home/uploadedFiles' }),
     MailerModule.forRoot({
       transport: {
         host: 'smtp.gmail.com',
