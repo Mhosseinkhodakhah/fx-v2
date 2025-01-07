@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Req, Res, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Req, Res, Put, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -6,7 +6,9 @@ import { refreshTokenDTO } from './dto/refreshTokenDto.dto';
 import { loginDto } from './dto/loginDto.dto';
 import { regisrtDto } from './dto/registerDto.dto';
 import { passwordBody } from './dto/passwordDto.dto';
-
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer'
+import { extname } from 'path';
 
 
 
@@ -54,6 +56,31 @@ export class UserController {
   updateUser(@Req() req:any, @Res() res : any , @Body() body : any){
     return this.userService.updateUser(req , res , body)
   }
+
+
+  @Post('upload/profile')
+  @UseInterceptors(FileInterceptor('profile', {
+    storage: diskStorage({
+      destination: '/home/uploadedFiles/profiles'
+      , filename: (req, file, cb) => {
+        console.log(file)
+        // Generating a 32 random chars long string
+        const randomName = Array(32).fill(null).map(() => (Math.round(Math.random() * 16)).toString(16)).join('')
+        //Calling the callback passing the random name generated with the original extension name
+        cb(null, `${randomName}${extname(file.originalname)}`)
+      }
+    })
+  }))
+  async upload(@Req() req, @Res() res, @UploadedFile(
+  ) profile) {
+    // console.log()
+    console.log(profile)
+    console.log(req.user)
+    return this.userService.uploadPictureProfile(req, res, profile.filename)
+    // return profile
+  }
+
+
 
   @Get('/info')
   getUserInfo(@Req() req: any, @Res() res: any) {
