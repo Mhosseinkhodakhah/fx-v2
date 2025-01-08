@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose"
 // import { time } from "console";
-import mongoose, { Document } from 'mongoose';
+import mongoose, { Document , mongo, Types } from 'mongoose';
 
 
 
@@ -32,7 +32,6 @@ export interface userInterFace extends Document {
     leaders: []
     discount :[]
     points : number
-    refreshToken : string
     historyUser : [];
     followings: { id: string }[]
     followers: { id: string }[]
@@ -52,14 +51,13 @@ export class Student {
     @Prop()
     password: string;
 
-    @Prop()
-    refreshToken: string;
 
-    @Prop({ type: Object })
+    @Prop({ type: {admin : {type : mongoose.Schema.Types.ObjectId , ref : 'admin'} , time : String}})
     approvationData: {
-        admin: { username: string, id: string },
+        admin: mongoose.Types.ObjectId,
         time: string
     }
+
     @Prop({ type: String })
     leaderRequestTime: string
 
@@ -78,10 +76,8 @@ export class Student {
     @Prop({ type: Boolean, default: false })
     usingCode: boolean;
 
-
     @Prop({type : Number , default : 0})
     otpCodeTime : number
-
 
     @Prop()
     firstName: string;
@@ -107,22 +103,22 @@ export class Student {
     @Prop({ default: false, type: Boolean })
     suspend: boolean;
 
-    @Prop()
-    subScriber: [{ userId : string , createTime: string , status : number , plan : number }];  // 0 : pending , 1 : wait for transaction confirmed 2 : approve transaction 3 : reject transaction
+    @Prop({type : {user : [mongoose.Schema.Types.ObjectId] , ref : 'user'} , createTime : String , status : Number , plan : Number})
+    subScriber: [{ userId : mongoose.Types.ObjectId , createTime: string , status : number , plan : number }];  // 0 : pending , 1 : wait for transaction confirmed 2 : approve transaction 3 : reject transaction
 
     @Prop()
     historyUser: [{ userId: string , createTime: string }];
 
-    @Prop()
-    subScribing: [string];
+    @Prop({type : [mongoose.Schema.Types.ObjectId] , ref : 'user'})
+    subScribing: mongoose.Types.ObjectId[];
 
-    @Prop()
-    followers : [string];
+    @Prop({type : [mongoose.Schema.Types.ObjectId] , ref : 'user'})
+    followers : mongoose.Types.ObjectId[];
 
-    @Prop()
-    followings: [{ id : string }];
+    @Prop({type : [mongoose.Schema.Types.ObjectId] , ref : 'user'})
+    followings: mongoose.Types.ObjectId[];
 
-    @Prop()
+    @Prop({type : String})
     gender: string;
 
     @Prop()
@@ -142,7 +138,7 @@ export class Student {
 
 
     @Prop({ type: String, default: null })
-    broker: [string]
+    broker: string
 
     @Prop()
     history: [{ _id: string }];
@@ -156,8 +152,8 @@ export class Student {
     @Prop({ type: String, default: null })
     resetTokenExpire: string;
 
-    @Prop()                                            //{type : [mongoose.Schema.Types.ObjectId] , ref:Student}
-    leaders : [string];
+    @Prop({type : [mongoose.Schema.Types.ObjectId] , ref : 'user'})                                            //{type : [mongoose.Schema.Types.ObjectId] , ref:Student}
+    leaders : mongoose.Types.ObjectId[];
 
     @Prop({ type: Boolean, default: false })
     autoExpand: boolean
