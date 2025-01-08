@@ -24,8 +24,8 @@ export class UserController {
 
 
   @Patch('/otp/check/:code/:email')
-  checlOtpCode(@Req() req : any , @Res() res : any , @Param('code') code : string , @Param('email') email : string){
-    return this.userService.checkOtpCode(req , res , +code , email)
+  checlOtpCode(@Req() req: any, @Res() res: any, @Param('code') code: string, @Param('email') email: string) {
+    return this.userService.checkOtpCode(req, res, +code, email)
   }
 
 
@@ -33,28 +33,28 @@ export class UserController {
   loginUser(@Req() req: any, @Res() res: any, @Body() body: loginDto) {
     return this.userService.loginUser(req, res, body)
   }
-  
+
 
   @Get('/forgetPassword/:userEmail')
-  forgetPassword(@Req() req: any, @Res() res: any,@Param('userEmail') userEmail : string){
-    return this.userService.forgetPassword(req , res , userEmail)
+  forgetPassword(@Req() req: any, @Res() res: any, @Param('userEmail') userEmail: string) {
+    return this.userService.forgetPassword(req, res, userEmail)
   }
 
 
   @Patch('/password/set/:userEmail')
-  finalResetPassword(@Req() req:any, @Res() res:any , @Body() body : passwordBody , @Param('userEmail') userEmail : string){
-    return this.userService.finalResetPasswor(req , res , body , userEmail)
+  finalResetPassword(@Req() req: any, @Res() res: any, @Body() body: passwordBody, @Param('userEmail') userEmail: string) {
+    return this.userService.finalResetPasswor(req, res, body, userEmail)
   }
 
 
   @Patch('/resetPassword/:resetToken/:userEmail')
-  resetPassword(@Param('resetToken') resetToken: string, @Param('userEmail') userEmail: string, @Req() req:any, @Res() res : any){
-    return this.userService.resetPasswordWithToken(resetToken , userEmail , req , res)
+  resetPassword(@Param('resetToken') resetToken: string, @Param('userEmail') userEmail: string, @Req() req: any, @Res() res: any) {
+    return this.userService.resetPasswordWithToken(resetToken, userEmail, req, res)
   }
 
   @Put('/update')
-  updateUser(@Req() req:any, @Res() res : any , @Body() body : any){
-    return this.userService.updateUser(req , res , body)
+  updateUser(@Req() req: any, @Res() res: any, @Body() body: any) {
+    return this.userService.updateUser(req, res, body)
   }
 
 
@@ -82,8 +82,8 @@ export class UserController {
 
 
   @Get('/leader/:leaderId')
-  getLeaderData(@Req() req: any, @Res() res: any , @Param('leaderId') leaderId : string){
-    return this.userService.getLeaderData(req , res , leaderId)
+  getLeaderData(@Req() req: any, @Res() res: any, @Param('leaderId') leaderId: string) {
+    return this.userService.getLeaderData(req, res, leaderId)
   }
 
 
@@ -95,7 +95,7 @@ export class UserController {
 
   @Get('/home/info')
   homePage(@Req() req: any, @Res() res: any) {
-    return this.userService.getHomePageInfo(req , res)
+    return this.userService.getHomePageInfo(req, res)
   }
 
   @Get('/token/check')
