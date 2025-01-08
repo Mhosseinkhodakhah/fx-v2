@@ -17,7 +17,7 @@ const jwt = require('jsonwebtoken')
 @Injectable()
 export class UserService {
 
-  constructor(private readonly interConnection : InterconnectionService,@InjectModel('user') private userModel: Model<userInterFace>, private readonly tokenService: TokenService, private readonly emailService: EmailService) { }
+  constructor(private readonly interConnection: InterconnectionService, @InjectModel('user') private userModel: Model<userInterFace>, private readonly tokenService: TokenService, private readonly emailService: EmailService) { }
 
 
 
@@ -36,12 +36,12 @@ export class UserService {
   }
 
 
-  async getHomePageInfo(req : any , res : any){
+  async getHomePageInfo(req: any, res: any) {
     const userId = req.user._id;
     // const leaders = await this.userModel.find({$and:[{role : 3} , {subScriber : {$in : userId}}]})
-    const leaders = await this.userModel.find({role : 3}).limit(4).select(['-password' , '-refreshToken'])
+    const leaders = await this.userModel.find({ role: 3 }).limit(4).select(['-password', '-refreshToken'])
     const transActions = await this.interConnection.getAllUserTransAction(userId)
-    return new Respons(req, res, 200, 'get user info', 'getting user info', null, {leaders : leaders , transActions : transActions.data})
+    return new Respons(req, res, 200, 'get user info', 'getting user info', null, { leaders: leaders, transActions: transActions.data })
   }
 
 
@@ -82,7 +82,7 @@ export class UserService {
       }
       const Token = await this.tokenService.tokenize(userData)
       const refreshToken = await this.tokenService.refreshToken({ email: user.email })
-      console.log('token is this . . .' , Token)
+      console.log('token is this . . .', Token)
       let newData = { ...user.toObject(), token: Token, refreshToken: refreshToken }
       return new Respons(req, res, 200, 'get new token by refresh token!!!', 'the token has been successfully refreshed!', null, newData)
     } catch (error) {
@@ -126,65 +126,65 @@ export class UserService {
   }
 
 
-  async forgetPassword(req : any, res : any , userEmail : string){
+  async forgetPassword(req: any, res: any, userEmail: string) {
     try {
       const user = await this.userModel.findOne({ email: userEmail })
       if (!user) {
-        return new Respons(req, res, 404, 'getting reset token' ,'this user is not exist on database!!!', 'no account found' ,null)
+        return new Respons(req, res, 404, 'getting reset token', 'this user is not exist on database!!!', 'no account found', null)
       }
       const resetToken = await this.#generateNumber()
       user.resetPasswordToken = resetToken.toString()
       user.resetTokenExpire = ((new Date().getSeconds()) + (24 * 3600)).toString()
       user.save()
       await this.emailService.sendResetPasswordEmail(resetToken.toString(), user.email, user.username)
-      return new Respons(req, res, 200, 'getting reset token' ,'reset password token sendt to user email!!!' ,null, { resetToken: resetToken })
+      return new Respons(req, res, 200, 'getting reset token', 'reset password token sendt to user email!!!', null, { resetToken: resetToken })
 
     } catch (error) {
-      return new Respons(req, res, 500,'getting reset token' ,'connecting to database on geting reset password failed!!', `${error}`, null)
+      return new Respons(req, res, 500, 'getting reset token', 'connecting to database on geting reset password failed!!', `${error}`, null)
     }
   }
 
 
-  
-  async finalResetPasswor(req: any, res: any, body: passwordBody , userEmail :string) {
-    const user = await this.userModel.findOne({ email: userEmail }).select(['-password' , '-refreshToken'])
+
+  async finalResetPasswor(req: any, res: any, body: passwordBody, userEmail: string) {
+    const user = await this.userModel.findOne({ email: userEmail }).select(['-password', '-refreshToken'])
     if (!user) {
-      return new Respons(req, res, 404, 'finalResetPassword', 'this email is not exist on database','account not found!', null)
+      return new Respons(req, res, 404, 'finalResetPassword', 'this email is not exist on database', 'account not found!', null)
     }
     let password = await this.tokenService.passwordHasher(body.password)
     user.password = password;
     await user.save()
-    return new Respons(req, res, 200, 'finalResetPassword','the password successfully updated' , null , {email : user.email})
+    return new Respons(req, res, 200, 'finalResetPassword', 'the password successfully updated', null, { email: user.email })
   }
 
 
 
-  async resetPasswordWithToken(resetToken: string, userEmail: string, req : any, res : any) {
+  async resetPasswordWithToken(resetToken: string, userEmail: string, req: any, res: any) {
     const user = await this.userModel.findOne({ email: userEmail }).select(['-password', '-refreshToken'])
     console.log(user)
     if (!user) {
-      return new Respons(req, res, 404, 'reset password' ,'reset password with reset token!!', 'this user is not exist on database!!!', null)
+      return new Respons(req, res, 404, 'reset password', 'reset password with reset token!!', 'this user is not exist on database!!!', null)
     }
 
-    if (user.resetPasswordToken != resetToken ){
-      return new Respons(req, res, 422 , 'reset password' ,'reset password with reset token failed', 'the reset password code is not valid', null)
+    if (user.resetPasswordToken != resetToken) {
+      return new Respons(req, res, 422, 'reset password', 'reset password with reset token failed', 'the reset password code is not valid', null)
     }
 
     if ((parseInt(user.resetTokenExpire) - (new Date().getSeconds())) <= 0) {
-      return new Respons(req, res, 422 , 'reset password' ,'reset password with reset token failed', 'the reset token expired!!!!try again!!!', null)
+      return new Respons(req, res, 422, 'reset password', 'reset password with reset token failed', 'the reset token expired!!!!try again!!!', null)
     }
-    return new Respons(req, res, 200, 'reset password' ,'reset password with reset token!! successfull', null , user)
+    return new Respons(req, res, 200, 'reset password', 'reset password with reset token!! successfull', null, user)
   }
 
 
 
-  async updateUser(req : any , res  : any , body : any){
+  async updateUser(req: any, res: any, body: any) {
     const userId = req.user._id;
     console.log(body)
-    const user = await this.userModel.findById(userId).select(['-password' , '-refreshToken'])
-    let newData = {...user.toObject() , ...body}
+    const user = await this.userModel.findById(userId).select(['-password', '-refreshToken'])
+    let newData = { ...user.toObject(), ...body }
     await user.updateOne(newData)
-    return new Respons(req , res , 200 , 'update user' , 'updating user successfully done!' , null , newData)
+    return new Respons(req, res, 200, 'update user', 'updating user successfully done!', null, newData)
   }
 
 
@@ -192,7 +192,7 @@ export class UserService {
     const newPath = `https://cdn.spider-cryptobot.site/profiles/${filename}`
     await this.userModel.findByIdAndUpdate(req.user._id, { profile: newPath })
     const updated = await this.userModel.findById(req.user._id)
-    return new Respons(req, res, 200, 'uploading profile', 'the profile successfully updated . . .' ,null, { path: newPath })
+    return new Respons(req, res, 200, 'uploading profile', 'the profile successfully updated . . .', null, { path: newPath })
   }
 
 
@@ -267,18 +267,17 @@ export class UserService {
     let newData = { ...user, token: token, refreshToken: refreshToken }
     return new Respons(req, res, 200, 'check otp code', 'the code validation succeed', null, newData)
   }
-  
 
 
-  async getLeaderData(req : any , res : any , leaderId : string){
+
+  async getLeaderData(req: any, res: any, leaderId: string) {
     try {
-      const leader = await this.userModel.findById(leaderId).select(['-password' , '-refreshToken']).populate({
-        path : 'subScriber',
-      }).populate({path : 'followers'})
-      return new Respons(req , res , 200 , 'get leader data' , 'leader data' , null , leader)
-  
+      const leader = await this.userModel.findById(leaderId).select(['-password', '-refreshToken']).populate({
+        path: 'subScriber',
+      }).populate({ path: 'followers' })
+      return new Respons(req, res, 200, 'get leader data', 'leader data', null, leader)
     } catch (error) {
-      return new Respons(req , res , 500 , 'get leader data' , 'getting leader data failed' , `${error}` , null)
+      return new Respons(req, res, 500, 'get leader data', 'getting leader data failed', `${error}`, null)
     }
   }
 
