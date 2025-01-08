@@ -3,7 +3,6 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose"
 import mongoose, { Document , mongo, Types } from 'mongoose';
 
 
-
 // here i make the interface for user
 export interface userInterFace extends Document {
     _id : any;
@@ -33,11 +32,10 @@ export interface userInterFace extends Document {
     discount :[]
     points : number
     historyUser : [];
-    followings: { id: string }[]
-    followers: { id: string }[]
+    followings: {}[]
+    followers: {}[]
     otpCodeTime : number
 }
-
 
 
 
@@ -152,7 +150,7 @@ export class Student {
     @Prop({ type: String, default: null })
     resetTokenExpire: string;
 
-    @Prop({type : [mongoose.Schema.Types.ObjectId] , ref : 'user'})                                            //{type : [mongoose.Schema.Types.ObjectId] , ref:Student}
+    @Prop({type : [mongoose.Schema.Types.ObjectId] , ref : 'user' , default : []})                                            //{type : [mongoose.Schema.Types.ObjectId] , ref:Student}
     leaders : mongoose.Types.ObjectId[];
 
     @Prop({ type: Boolean, default: false })
