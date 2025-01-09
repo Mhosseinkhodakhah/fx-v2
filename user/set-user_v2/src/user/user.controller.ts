@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Req, Res, Put, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Req, Res, Put, UseInterceptors, UploadedFile, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -9,6 +9,9 @@ import { passwordBody } from './dto/passwordDto.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer'
 import { extname } from 'path';
+import { Roles } from 'src/role-gaurd/roles.decorator';
+import { RoleGaurdGuard } from 'src/role-gaurd/role-gaurd.guard';
+import { leaderLoginDto } from './dto/leaderLoginDTo.dto';
 
 
 
@@ -82,21 +85,12 @@ export class UserController {
 
 
   @Get('/leader/:leaderId')
+  @Roles(0)
+  @UseGuards(RoleGaurdGuard)
   getLeaderData(@Req() req: any, @Res() res: any, @Param('leaderId') leaderId: string) {
     return this.userService.getLeaderData(req, res, leaderId)
   }
 
-
-  @Get('/info')
-  getUserInfo(@Req() req: any, @Res() res: any) {
-    return this.userService.getUserInfo(req, res)
-  }
-
-
-  @Get('/home/info')
-  homePage(@Req() req: any, @Res() res: any) {
-    return this.userService.getHomePageInfo(req, res)
-  }
 
   @Get('/token/check')
   checkToken(@Req() req: any, @Res() res: any) {
@@ -106,6 +100,25 @@ export class UserController {
   @Post('/token/refresh')
   refreshToken(@Req() req: any, @Res() res: any, @Body() body: refreshTokenDTO) {
     return this.userService.refreshToken(req, res, body)
+  }
+
+  @Post('leaderLogin')
+  // @Roles(3)
+  // @UseGuards(RoleGaurdGuard)
+  loginLeader(@Body() body: leaderLoginDto, @Req() req : any, @Res() res : any){
+    return this.userService.loginLeader(body , req , res)
+  }
+
+
+  @Put('Follow/:userId')
+  followed(@Req() req : any, @Res() res : any, @Param('userId') userId: string) {
+    return this.userService.folowSomone(req, res, userId)
+  }
+
+
+  @Put('Subscribe/:leaderId')
+  subscribed(@Req() req :any, @Res() res:any, @Param('leaderId') leaderId: string) {
+    return this.userService.subscribe(req, res, leaderId)
   }
 
 

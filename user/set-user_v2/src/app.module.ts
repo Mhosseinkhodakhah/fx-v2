@@ -14,6 +14,8 @@ import { InterconnectionService } from './interconnection/interconnection.servic
 import { MulterModule } from '@nestjs/platform-express';
 import { RabbitMqService } from './rabbit-mq/rabbit-mq.service';
 import { UserController } from './user/user.controller';
+import { APP_GUARD } from '@nestjs/core';
+import { RoleGaurdGuard } from './role-gaurd/role-gaurd.guard';
 
 @Module({
   imports: [UserModule ,
@@ -29,9 +31,17 @@ import { UserController } from './user/user.controller';
         },
       },
     })
-    ,MongooseModule.forRoot('mongodb+srv://kianlucifer0098:lucifer25255225@cluster0.p5b71z1.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0') ,MongooseModule.forFeature([{ name: 'user', schema: UserSchema }, { name: 'subscribers', schema: subScribers }]) , ConfigModule.forRoot({ envFilePath: 'config.env', isGlobal: true })],
+    ,MongooseModule.forRoot('mongodb+srv://kianlucifer0098:lucifer25255225@cluster0.p5b71z1.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0') ,
+    MongooseModule.forFeature([{ name: 'user', schema: UserSchema }, { name: 'subscribers', schema: subScribers }]) , 
+    ConfigModule.forRoot({ envFilePath: 'config.env', isGlobal: true }) , 
+    ],
   controllers: [AppController],
-  providers: [AppService, TokenService, EmailService, InterconnectionService, RabbitMqService],
+  providers: [AppService, TokenService, EmailService, InterconnectionService, RabbitMqService , 
+    {
+      provide: APP_GUARD,
+      useClass: RoleGaurdGuard,
+    }
+  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
