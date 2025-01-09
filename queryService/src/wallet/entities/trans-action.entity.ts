@@ -34,4 +34,4 @@ export class transAction{
 
 
 
-export const TransAction = SchemaFactory.createForClass(transAction)
+export const TransActionSchema = SchemaFactory.createForClass(transAction)

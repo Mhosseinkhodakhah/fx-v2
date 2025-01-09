@@ -101,7 +101,7 @@ export class Student {
     @Prop({ default: false, type: Boolean })
     suspend: boolean;
 
-    @Prop({type : {user : [mongoose.Schema.Types.ObjectId] , ref : 'user'} , createTime : String , status : Number , plan : Number})
+    @Prop({type : {user :{type :  [mongoose.Schema.Types.ObjectId] , ref : 'user'}} , createTime : String , status : Number , plan : Number})
     subScriber: [{ userId : mongoose.Types.ObjectId , createTime: string , status : number , plan : number }];  // 0 : pending , 1 : wait for transaction confirmed 2 : approve transaction 3 : reject transaction
 
     @Prop()

@@ -17,7 +17,7 @@ export class RabbitMqService {
     constructor(@InjectModel('user') private userModel : Model<userInterFace>  ) {
         const connection = amqp.connect(['amqp://localhost']);     // connect to rabbit
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////!
-        //*its for assert the queues
+        // its for assert the queues
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////!
         this.channelWrapper = connection.createChannel({             // crathe the channel
             setup: (channel: Channel) => {                                    // setup the channel
@@ -46,7 +46,7 @@ export class RabbitMqService {
                 }
                 channel.ack(message);
             })
-
+            
             await channel.consume('updateSignalData', async (message) => {
                 const data: updateUserDBInterface = JSON.parse(message.content.toString())
                 channel.ack(message);
@@ -55,7 +55,7 @@ export class RabbitMqService {
 
             await channel.consume('updateWalletData', async (message) => {
                 const data: updateWalletDataInterface = JSON.parse(message.content.toString())
-                
+
                 channel.ack(message);
             })
 
