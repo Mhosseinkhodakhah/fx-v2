@@ -39,7 +39,11 @@ export class UserService {
 
   async checkToken(req: any, res: any) {
     const userData = await this.userModel.findById(req.user._id)
-    return new Respons(req, res, 200, 'checking user token', 'check token', null, { user: userData })
+    return {
+      message: 'check user token done',
+      statusCode: 200,
+      data: { user: userData }
+    }
   }
 
 
@@ -49,15 +53,21 @@ export class UserService {
     try {
       const decoded = jwt.verify(token, process.env.REFRESH_SECRET_KEY)
       if (!decoded) {
-        console.log('111')
-        return new Respons(req, res, 401, 'get new token!!', 'this token is expired', 'refresh token expired', null)
+        return {
+          message: 'get new token failed',
+          statusCode: 401,
+          error: 'refresh token expired'
+        }
       }
 
       const user = await this.userModel.findOne({ email: decoded.userData.email })
 
       if (!user) {
-        console.log('222')
-        return new Respons(req, res, 401, 'get new token!!', 'this token is not valid', 'refresh token expired', null)
+        return {
+          message: 'get new token failed',
+          statusCode: 401,
+          error: 'refresh token expired'
+        }
       }
       const userData = {
         _id: user._id,
@@ -75,10 +85,18 @@ export class UserService {
       const refreshToken = await this.tokenService.refreshToken({ email: user.email })
       console.log('token is this . . .', Token)
       let newData = { ...user.toObject(), token: Token, refreshToken: refreshToken }
-      return new Respons(req, res, 200, 'get new token by refresh token!!!', 'the token has been successfully refreshed!', null, newData)
+      return {
+        message: 'get new token done',
+        statusCode: 200,
+        data: newData
+      }
     } catch (error) {
       console.log(error)
-      return new Respons(req, res, 401, 'get new token!!', 'this token is not valid', 'refresh token expired', null)
+      return {
+        message: 'get new token failed',
+        statusCode: 500,
+        error: `${error}`
+      }
     }
   }
 
@@ -86,12 +104,20 @@ export class UserService {
   async loginUser(req: any, res: any, body: loginDto) {
     const user = await this.userModel.findOne({ email: body.email }).select(['-refreshToken'])
     if (!user) {
-      return new Respons(req, res, 404, 'loging in user', 'login user failed', 'this user is not exist in the database', null)
+      return {
+        message: 'user log in failed',
+        statusCode: 404,
+        error: 'account not found!'
+      }
     }
     const hashedPassword = await this.tokenService.passwordHasher(body.password)
 
     if (hashedPassword != user.password) {
-      return new Respons(req, res, 403, 'loging in user', 'login user failed', 'the password is incorrect!!!', null)
+      return {
+        message: 'user log in failed',
+        statusCode: 403,
+        error: 'incorrect password'
+      }
     }
     const userData = {
       _id: user._id,
@@ -110,23 +136,38 @@ export class UserService {
     const newData = { ...(user.toObject()), token: token, refreshToken: refreshToken }
 
     delete newData.password
-    return new Respons(req, res, 200, 'loging in user', 'user login successfull', null, newData)
-
+    return {
+      message: 'user log in done',
+      statusCode: 200,
+      data: newData
+    }
   }
 
 
-  async loginLeader(body: leaderLoginDto, req, res) {
+  async loginLeader(body: leaderLoginDto, req: any, res: any) {
     const leader = await this.userModel.findOne({ email: body.email })
     if (!leader) {
-      return new Respons(req, res, 404, 'loging in leader', 'leader cant login , this email has not been registered', 'resource not found', null)
+      return {
+        message: 'leader log in failed',
+        statusCode: 404,
+        error: 'account not found'
+      }
     }
     if (leader.role < 3) {
-      return new Respons(req, res, 403, 'loging in user', 'not permisioned', 'you are not approved leader yet', null)
+      return {
+        message: 'leader log in failed',
+        statusCode: 403,
+        error: 'you are not leader yet'
+      }
     }
     const hashedPassword = await this.tokenService.passwordHasher(body.password)
 
     if (hashedPassword != leader.password) {
-      return new Respons(req, res, 403, 'loging in user', 'incorrect password', 'the password is incorrect!!!', null)
+      return {
+        message: 'leader log in failed',
+        statusCode: 403,
+        error: 'incorrect password'
+      }
     }
     req.user = leader
     const userData = {
@@ -144,24 +185,40 @@ export class UserService {
     const token = await this.tokenService.tokenize(userData)
     const refreshToken = await this.tokenService.refreshToken({ email: leader.email })
     let newData = { ...leader.toObject(), token: token, refreshToken: refreshToken, walletBalance: 0 }
-    return new Respons(req, res, 200, 'loging in user', 'leader loged in successfully', null, newData)
+    return {
+      message: 'leader loged in successfully',
+      statusCode: 200,
+      data: newData
+    }
   }
 
   async forgetPassword(req: any, res: any, userEmail: string) {
     try {
       const user = await this.userModel.findOne({ email: userEmail })
       if (!user) {
-        return new Respons(req, res, 404, 'getting reset token', 'this user is not exist on database!!!', 'no account found', null)
+        return {
+          message: 'getting reset code failed',
+          statusCode: 404,
+          error: 'account not found'
+        }
       }
       const resetToken = await this.#generateNumber()
       user.resetPasswordToken = resetToken.toString()
       user.resetTokenExpire = ((new Date().getSeconds()) + (24 * 3600)).toString()
       user.save()
       await this.emailService.sendResetPasswordEmail(resetToken.toString(), user.email, user.username)
-      return new Respons(req, res, 200, 'getting reset token', 'reset password token sendt to user email!!!', null, { resetToken: resetToken })
+      return {
+        message: 'getting reset code done',
+        statusCode: 200,
+        data: { resetToken: resetToken }
+      }
 
     } catch (error) {
-      return new Respons(req, res, 500, 'getting reset token', 'connecting to database on geting reset password failed!!', `${error}`, null)
+      return {
+        message: 'getting reset code failed',
+        statusCode: 500,
+        error: `${error}`
+      }
     }
   }
 
@@ -170,32 +227,56 @@ export class UserService {
     const user = await this.userModel.findOne({ email: userEmail }).select(['-password', '-refreshToken'])
     console.log(user)
     if (!user) {
-      return new Respons(req, res, 404, 'reset password', 'reset password with reset token!!', 'this user is not exist on database!!!', null)
+      return {
+        message: 'reset password with reset token failed!this user is not exist on database!!!',
+        statusCode: 404,
+        error: 'resource not found'
+      }
     }
 
     if (user.resetPasswordToken != resetToken) {
-      return new Respons(req, res, 422, 'reset password', 'reset password with reset token failed', 'the reset password code is not valid', null)
+      return {
+        message: 'reset password with reset token failed',
+        statusCode: 422,
+        error: 'the reset password code is not valid'
+      }
     }
 
     if ((parseInt(user.resetTokenExpire) - (new Date().getSeconds())) <= 0) {
-      return new Respons(req, res, 422, 'reset password', 'reset password with reset token failed', 'the reset token expired!!!!try again!!!', null)
+      return {
+        message: 'reset password with reset token failed',
+        statusCode: 422,
+        error: 'reset code is expired'
+      }
     }
-    return new Respons(req, res, 200, 'reset password', 'reset password with reset token!! successfull', null, user)
+    return {
+      message: 'the password reset with reset token',
+      statusCode: 200,
+      data: user
+    }
   }
 
 
   async finalResetPasswor(req: any, res: any, body: passwordBody, userEmail: string) {
     const user = await this.userModel.findOne({ email: userEmail }).select(['-password', '-refreshToken'])
     if (!user) {
-      return new Respons(req, res, 404, 'finalResetPassword', 'this email is not exist on database', 'account not found!', null)
+      return {
+        message: 'this email is not exist on database',
+        statusCode: 404,
+        error: 'account not found!'
+      }
     }
     let password = await this.tokenService.passwordHasher(body.password)
     user.password = password;
     let Updated = { ...user.toObject() }
     delete Updated._id
-    await this.eventService.updateUser(user._id, Updated)
+    await this.eventService.updateUser(user._id, Updated , 'updateUser')
     await user.save()
-    return new Respons(req, res, 200, 'finalResetPassword', 'the password successfully updated', null, { email: user.email })
+    return {
+      message: 'the password succcessfully reset',
+      statusCode: 200,
+      data: { email: user.email }
+    }
   }
 
 
@@ -209,8 +290,12 @@ export class UserService {
     await user.updateOne(newData)
     let updateData = { ...newData }
     delete updateData._id
-    await this.eventService.updateUser(user._id, updateData)
-    return new Respons(req, res, 200, 'update user', 'updating user successfully done!', null, newData)
+    await this.eventService.updateUser(user._id, updateData , 'updateUser')
+    return {
+      message: 'user updated',
+      statusCode: 200,
+      data: newData
+    }
   }
 
 
@@ -220,8 +305,12 @@ export class UserService {
     const updated = await this.userModel.findById(req.user._id)
     let updateData = { ...updated.toObject() }
     delete updateData._id
-    await this.eventService.updateUser(updated._id, updateData)
-    return new Respons(req, res, 200, 'uploading profile', 'the profile successfully updated . . .', null, { path: newPath })
+    await this.eventService.updateUser(updated._id, updateData , 'updateUser')
+    return {
+      message: 'the profile successfullly uploaded',
+      statusCode: 200,
+      data: { path: newPath }
+    }
   }
 
 
@@ -230,7 +319,11 @@ export class UserService {
       const existance = await this.userModel.findOne({ email: body.email })
       if (existance) {
         if (existance.usingCode) {
-          return new Respons(req, res, 409, 'regsiter new user', 'this email had been already registere', 'existance email', null)
+          return {
+            message: 'otp code sent to user email . . .',
+            statusCode: 409,
+            error: 'this email had been registered'
+          }
         }
         const code = await this.#generateNumber()
         const hashedPassword = await this.tokenService.passwordHasher(body.password)
@@ -244,8 +337,12 @@ export class UserService {
         let updateData = { ...existance.toObject() }
         await existance.save()
         delete updateData._id
-        await this.eventService.updateUser(existance._id, updateData)
-        return new Respons(req, res, 200, 'code sent to user', 'the code sent to user email successfully. . .  ', null, { email: body.email, code: code })
+        await this.eventService.updateUser(existance._id, updateData , 'updateUser')
+        return {
+          message: 'otp code sent to user email',
+          statusCode: 200,
+          data: { email: body.email, code: code }
+        }
       }
       const code = await this.#generateNumber()
       const hashedPassword = await this.tokenService.passwordHasher(body.password)
@@ -256,11 +353,19 @@ export class UserService {
       const newUser = await this.userModel.create(data)
       let updateData = (await this.userModel.findById(newUser._id)).toObject()
       delete updateData._id
-      await this.eventService.updateUser(newUser._id, updateData)
-      return new Respons(req, res, 200, 'code sent to user', 'the code sent to user email successfully. . .  ', null, { email: body.email, code: code })
+      await this.eventService.updateUser(newUser._id, updateData , 'createNewUser')
+      return {
+        message: 'otp code sent to user email . . .',
+        statusCode: 200,
+        data: { email: body.email, code: code }
+      }
     } catch (error) {
       console.log('error occured', error)
-      return new Respons(req, res, 500, 'code sent to user', 'the code did not sent to user email successfully. . .  ', `${error}`, null)
+      return {
+        message: 'otp code did not send',
+        statusCode: 500,
+        error: `${error}`
+      }
     }
   }
 
@@ -268,14 +373,26 @@ export class UserService {
   async checkOtpCode(req: any, res: any, code: number, email: string) {
     const existinguser = await this.userModel.findOne({ email: email })
     if (!existinguser) {
-      return new Respons(req, res, 404, 'check otp code', 'please registere first', `this email did not rigistered.`, null)
+      return {
+        message: 'this email did not registered',
+        statusCode: 404,
+        error: 'resource not found'
+      }
     }
     if (existinguser.code != code) {
-      return new Respons(req, res, 422, 'check otp code', 'the code is not valid', `wrong otp code`, null)
+      return {
+        message: 'otp code validation failed',
+        statusCode: 422,
+        error: 'the otp code is not valid'
+      }
     }
     let currentTime = new Date().getTime()
     if ((currentTime - existinguser.otpCodeTime) > 2.5 * 60 * 1000) {
-      return new Respons(req, res, 403, 'check otp code', 'the time limit of otp code exceeded', 'time limit exceeded', null)
+      return {
+        message: 'the time limit of otp code exceeded',
+        statusCode: 403,
+        error: 'time limit exceeded'
+      }
     }
     existinguser.usingCode = true;
     existinguser.otpCodeTime = 0;
@@ -296,7 +413,11 @@ export class UserService {
     const token = await this.tokenService.tokenize(userData)
     const refreshToken = await this.tokenService.refreshToken({ email: user.email })
     let newData = { ...user, token: token, refreshToken: refreshToken }
-    return new Respons(req, res, 200, 'check otp code', 'the code validation succeed', null, newData)
+    return {
+      message: 'check otp code',
+      statusCode: 200,
+      data: newData
+    }
   }
 
 
@@ -306,9 +427,17 @@ export class UserService {
       const leader = await this.userModel.findById(leaderId).select(['-password', '-refreshToken']).populate({
         path: 'subScriber',
       }).populate({ path: 'followers' })
-      return new Respons(req, res, 200, 'get leader data', 'leader data', null, leader)
+      return {
+        message: 'getting leader data succeed',
+        statusCode: 200,
+        data: leader
+      }
     } catch (error) {
-      return new Respons(req, res, 500, 'get leader data', 'getting leader data failed', `${error}`, null)
+      return {
+        message: 'getting leader data failed',
+        statusCode: 500,
+        error: `${error}`
+      }
     }
   }
 
@@ -350,8 +479,8 @@ export class UserService {
       delete newData1._id
       let newData2 = { ...follower.toObject() }
       delete newData2._id
-      await this.eventService.updateUser(follower._id, newData1)
-      await this.eventService.updateUser(following._id, newData2)
+      await this.eventService.updateUser(follower._id, newData1 , 'updateUser')
+      await this.eventService.updateUser(following._id, newData2 , 'updateUser')
       const updated = await this.userModel.findById(userId)
       return {
         message: 'following leaders done!',
@@ -370,8 +499,8 @@ export class UserService {
       delete newData1._id
       let newData2 = { ...follower.toObject() }
       delete newData2._id
-      await this.eventService.updateUser(follower._id, newData1)
-      await this.eventService.updateUser(following._id, newData2)
+      await this.eventService.updateUser(follower._id, newData1 , 'updateUser')
+      await this.eventService.updateUser(following._id, newData2 , 'updateUser')
       const updated = await this.userModel.findById(userId)
       return {
         message: 'unfollow leader done!',
@@ -418,8 +547,8 @@ export class UserService {
       delete newData1._id;
       let newData2 = { ...subscribing.toObject() }
       delete newData2._id
-      await this.eventService.updateUser(subscriber2._id, newData1)
-      await this.eventService.updateUser(subscribing._id, newData2)
+      await this.eventService.updateUser(subscriber2._id, newData1 , 'updateUser')
+      await this.eventService.updateUser(subscribing._id, newData2 , 'updateUser')
       const updated = await this.userModel.findById(req.user._id)
       return {
         message: 'unsubscribing leader done!',
@@ -446,8 +575,8 @@ export class UserService {
         delete newData1._id;
         let newData2 = { ...subscibing.toObject() }
         delete newData2._id
-        await this.eventService.updateUser(subscriber2._id, newData1)
-        await this.eventService.updateUser(subscibing._id, newData2)
+        await this.eventService.updateUser(subscriber2._id, newData1 , 'updateUser')
+        await this.eventService.updateUser(subscibing._id, newData2 , 'updateUser')
         const updated = await this.userModel.findById(req.user._id)
 
         // await this.eventService.payToLeader({
@@ -469,7 +598,4 @@ export class UserService {
       }
     }
   }
-
-
-
 }

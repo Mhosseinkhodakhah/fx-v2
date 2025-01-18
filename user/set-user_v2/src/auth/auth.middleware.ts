@@ -1,7 +1,6 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Respons } from 'src/response/response';
 import { userInterFace } from 'src/user/entities/user.entity';
 const jwt = require('jsonwebtoken')
 
@@ -24,7 +23,11 @@ export class auth implements NestMiddleware {
 
   
   if (!token) {
-    return new Respons(req , res , 401 , 'user authorization' , 'authorize user' , 'token Expired!' , null)
+    return {
+      message: 'user authentications',
+      statusCode: 401,
+      error : 'token Expired!'
+    }
   }
 
   console.log('level 2 for token . . .' , token)
@@ -36,7 +39,11 @@ export class auth implements NestMiddleware {
 
     if (!decoded) {
       console.log('error one . . .' , decoded)
-      return new Respons(req , res , 401 , 'user authorization' , 'authorize user' , 'token Expired!' , null)
+      return {
+        message: 'user authentications',
+        statusCode: 401,
+        error : 'token Expired!'
+      }
     }
     
     req.user = decoded.userData;
@@ -44,7 +51,11 @@ export class auth implements NestMiddleware {
     next();
   } catch (err) {
     console.log('catch error . . .' , err)
-    return new Respons(req , res , 401 , 'user authorization' , 'authorize user' , 'token Expired!' , null)
+    return {
+      message: 'user authentications',
+      statusCode: 401,
+      error : 'token Expired!'
+    }
   
   }
   }
