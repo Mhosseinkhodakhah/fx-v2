@@ -17,12 +17,10 @@ export class UserController {
     return this.userService.getUserInfo(req, res)
   }
 
-
   @Get('/home/info')
   homePage(@Req() req: any, @Res() res: any) {
     return this.userService.getHomePageInfo(req, res)
   }
-
 
   @Get('/branches')
   getLeaders(@Req() req : any, @Res() res : any) {
