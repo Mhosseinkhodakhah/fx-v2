@@ -13,7 +13,7 @@ import { passwordBody } from './dto/passwordDto.dto';
 import { InterconnectionService } from 'src/interconnection/interconnection.service';
 import { RabbitMqService } from 'src/rabbit-mq/rabbit-mq.service';
 import { leaderLoginDto } from './dto/leaderLoginDTo.dto';
-import { subsCribers } from './entities/subscribers.entity';
+import { subsCribers, subsInterface } from './entities/subscribers.entity';
 const jwt = require('jsonwebtoken')
 
 
@@ -22,7 +22,7 @@ export class UserService {
 
   constructor(private readonly interConnection: InterconnectionService,
     @InjectModel('user') private userModel: Model<userInterFace>,
-    @InjectModel('subScribers') private subScriberModel: Model<subsCribers>,
+    @InjectModel('subscribers') private subScriberModel: Model<subsInterface>,
     private readonly tokenService: TokenService,
     private readonly emailService: EmailService,
     private readonly eventService: RabbitMqService) { }
