@@ -129,7 +129,6 @@ app.use("/api/getUsers" , rooter.proxy(process.env.USER_G_SERVICE));        // r
 
 app.use("/api/setUsers" , rooter.proxy(process.env.USER_S_SERVICE));        // routing the req to set user service
 
-app.use("/api/v2/setUsers" , rooter.proxy(process.env.USER_V2));        // routing the req to get user service
 
 app.use("/api/getContent" , rooter.proxy(process.env.CONTENT_G_SERVICE) );  // routing the req to get content service
 
@@ -152,3 +151,11 @@ app.use("/api/setStory" , rooter.proxy(process.env.STORY_S_SERVICE) );       // 
 app.use("/api/getStory" , rooter.proxy(process.env.STORY_G_SERVICE) );       // routing the req to get story service
 
 app.use("/api/setTask" , rooter.proxy(process.env.TASK_SERVICE) );       // routing the req to get story service
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+app.use("/api/v2/setUsers" , rooter.proxy(process.env.USER_V2));        // routing the req to user service
+
+app.use("/api/v2/query" , rooter.proxy(process.env.QUERY));        // routing the req to get query service
