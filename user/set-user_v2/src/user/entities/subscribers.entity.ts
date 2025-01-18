@@ -26,7 +26,6 @@ export class subsCribers {
     status : number;
     @Prop()
     email : string;
-    
     @Prop()
     transActionId : string;
     @Prop({type : Number})

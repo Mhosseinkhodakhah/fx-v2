@@ -3,7 +3,6 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose"
 import mongoose, { Document , mongo, Types } from 'mongoose';
 
 
-
 // here i make the interface for user
 export interface userInterFace extends Document {
     _id : any;
@@ -136,7 +135,6 @@ export class Student {
     @Prop()
     ticket: string;
 
-
     @Prop({ type: String, default: null })
     broker: string
 
@@ -157,7 +155,7 @@ export class Student {
 
     @Prop({ type: Boolean, default: false })
     autoExpand: boolean
-//{id : 1 , status : 0 , discount : 0 , active : true} , {id : 2 , status : 1 , discount : 0 , active : true} , {id : 3 , status : 2 , discount : 0 , active : true}
+    //{id : 1 , status : 0 , discount : 0 , active : true} , {id : 2 , status : 1 , discount : 0 , active : true} , {id : 3 , status : 2 , discount : 0 , active : true}
     @Prop({ default: [] })
     discount: [{id : number , status: number , discount : number , active : boolean }]   //status => 0 : 1 month    // 1 : two month   // 2 : 3 month
 

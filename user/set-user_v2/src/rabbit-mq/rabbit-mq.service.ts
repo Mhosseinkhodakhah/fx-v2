@@ -14,7 +14,7 @@ export class RabbitMqService {
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////!
         this.channelWrapper = connection.createChannel({             // crathe the channel
             setup: (channel: Channel) => {                                   // setup the channel
-                channel.assertQueue('updateUserData', { durable: true });          // assert the queue
+                channel.assertQueue('userService', { durable: true });          // assert the queue
             },
         });
 
@@ -40,11 +40,11 @@ export class RabbitMqService {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////!
     //*its for updating the user data in query service
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////!
-    async updateUser(userId: string, userData: {}) {                // send the message in queue
+    async updateUser(userId: string, userData: {} , message : string) {                // send the message in queue
         try {
             let data = { user: userId, data: userData }
             await this.channelWrapper.sendToQueue(
-                'updateUserData',
+                'userService',
                 Buffer.from(JSON.stringify(data)),
             );
         } catch (error) {
