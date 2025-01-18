@@ -1,5 +1,6 @@
 export interface updateUserDBInterface {
     userId : string;
+    message : string
     userData : {}
 }
 

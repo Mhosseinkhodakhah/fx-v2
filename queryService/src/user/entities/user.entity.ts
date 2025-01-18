@@ -32,10 +32,11 @@ export interface userInterFace extends Document {
     discount :[]
     points : number
     historyUser : [];
-    followings: {}[]
-    followers: {}[]
+    followings: { id: string }[]
+    followers: { id: string }[]
     otpCodeTime : number
 }
+
 
 
 
@@ -101,8 +102,8 @@ export class Student {
     @Prop({ default: false, type: Boolean })
     suspend: boolean;
 
-    @Prop({type : {user :{type :  [mongoose.Schema.Types.ObjectId] , ref : 'user'}} , createTime : String , status : Number , plan : Number})
-    subScriber: [{ userId : mongoose.Types.ObjectId , createTime: string , status : number , plan : number }];  // 0 : pending , 1 : wait for transaction confirmed 2 : approve transaction 3 : reject transaction
+    @Prop({type : [{userId : {type : mongoose.Schema.Types.ObjectId , ref : 'user'} , createTime: {type : String} , status : {type : Number} , plan : {type :Number}}]})
+    subScriber: { userId : mongoose.Types.ObjectId , createTime: string , status : number , plan : number }[];  // 0 : pending , 1 : wait for transaction confirmed 2 : approve transaction 3 : reject transaction
 
     @Prop()
     historyUser: [{ userId: string , createTime: string }];
@@ -134,7 +135,6 @@ export class Student {
     @Prop()
     ticket: string;
 
-
     @Prop({ type: String, default: null })
     broker: string
 
@@ -150,12 +150,12 @@ export class Student {
     @Prop({ type: String, default: null })
     resetTokenExpire: string;
 
-    @Prop({type : [mongoose.Schema.Types.ObjectId] , ref : 'user' , default : []})                                            //{type : [mongoose.Schema.Types.ObjectId] , ref:Student}
+    @Prop({type : [mongoose.Schema.Types.ObjectId] , ref : 'user'})                                            //{type : [mongoose.Schema.Types.ObjectId] , ref:Student}
     leaders : mongoose.Types.ObjectId[];
 
     @Prop({ type: Boolean, default: false })
     autoExpand: boolean
-//{id : 1 , status : 0 , discount : 0 , active : true} , {id : 2 , status : 1 , discount : 0 , active : true} , {id : 3 , status : 2 , discount : 0 , active : true}
+    //{id : 1 , status : 0 , discount : 0 , active : true} , {id : 2 , status : 1 , discount : 0 , active : true} , {id : 3 , status : 2 , discount : 0 , active : true}
     @Prop({ default: [] })
     discount: [{id : number , status: number , discount : number , active : boolean }]   //status => 0 : 1 month    // 1 : two month   // 2 : 3 month
 
