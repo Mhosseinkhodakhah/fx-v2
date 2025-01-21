@@ -29,7 +29,9 @@ export class RabbitMqService {
                 try {
                     const user = JSON.parse(message.content.toString())
                     const newWallet = await this.walletModel.create({ owner: user })
-                    await this.walletEvent(user , newWallet , 'createNewWallet')
+                    const newWallet2= {...newWallet}
+                    delete newWallet2._id
+                    await this.walletEvent(newWallet2.owner , newWallet2 , 'createNewWallet')
                     channel.ack(message);
                 } catch (error) {
                     console.log('error occured while creating new user wallet>>>>>', `${error}`)
@@ -41,7 +43,7 @@ export class RabbitMqService {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////!
     //*its for updating the user data in query service
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////!
-    async walletEvent(user: string, walletData: {}, message: string) {                // send the message in queue
+    async walletEvent(user:any, walletData: {}, message: string) {                // send the message in queue
         try {
             let data = { user: user, data: walletData }
             await this.channelWrapper.sendToQueue(
@@ -52,5 +54,5 @@ export class RabbitMqService {
             console.log('error occured whent trying to send to increase point user')
             console.log(`${error}`)
         }
-    }
+    }   
 }

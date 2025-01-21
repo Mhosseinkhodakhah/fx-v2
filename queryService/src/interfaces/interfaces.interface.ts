@@ -6,6 +6,7 @@ export interface updateUserDBInterface {
 
 
 export interface updateWalletDataInterface{
-    userId : string;
-    walletData : {}
+    user : string;
+    data : {};
+    message : string;
 }
