@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { HttpException, HttpStatus, Logger } from '@nestjs/common';
 import amqp, { ChannelWrapper } from 'amqp-connection-manager';
 import { Channel } from 'amqplib';
+import { walletCreationData } from 'src/interfaces/interfaces.interface';
 
 
 @Injectable()
@@ -15,6 +16,7 @@ export class RabbitMqService {
         this.channelWrapper = connection.createChannel({             // crathe the channel
             setup: (channel: Channel) => {                                   // setup the channel
                 channel.assertQueue('userService', { durable: true });          // assert the queue
+                channel.assertQueue('createWallet', { durable: true });          // assert the queue for create wallet from user service
             },
         });
 
@@ -49,6 +51,22 @@ export class RabbitMqService {
             );
         } catch (error) {
             console.log('error occured whent trying to send to increase point user')
+            console.log(`${error}`)
+        }
+    }
+
+
+    /////////////////////////////////////////////////
+    // its for creating wallet after update user
+    /////////////////////////////////////////////////
+    async createWallet(user : walletCreationData){
+        try {
+            await this.channelWrapper.sendToQueue(
+                'createWallet',
+                Buffer.from(JSON.stringify(user))
+            );
+        } catch (error) {
+            console.log('error occured when trying to send wallet for creating wallet')
             console.log(`${error}`)
         }
     }
