@@ -8,13 +8,14 @@ import { Model } from 'mongoose';
 import { updateUserDBInterface, updateWalletDataInterface } from 'src/interfaces/interfaces.interface';
 import { userInterFace } from 'src/user/entities/user.entity';
 import { UserService } from 'src/user/user.service';
+import { walletInterFace } from 'src/wallet/entities/wallet.entity';
 
 
 @Injectable()
 export class RabbitMqService {
     // constructor(private readonly amqpConnection: AmqpConnection) {}            // get amqpConnection in constructor
     private channelWrapper: ChannelWrapper;         // make the channel wrapper
-    constructor(@InjectModel('user') private userModel: Model<userInterFace>) {
+    constructor(@InjectModel('user') private userModel: Model<userInterFace>, @InjectModel('wallet') private wallet: Model<walletInterFace>) {
         const connection = amqp.connect(['amqp://localhost']);     // connect to rabbit
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////!
         // its for assert the queues
@@ -23,7 +24,7 @@ export class RabbitMqService {
             setup: (channel: Channel) => {                                    // setup the channel
                 channel.assertQueue('userService', { durable: true });          // assert the queue
                 channel.assertQueue('updateSignalData', { durable: true });          // assert the queue
-                channel.assertQueue('updateWalletData', { durable: true });          // assert the queue
+                channel.assertQueue('walletService', { durable: true });          // assert the queue
                 channel.assertQueue('updateTaskData', { durable: true });          // assert the queue
                 channel.assertQueue('updateStoryData', { durable: true });          // assert the queue
             },
@@ -58,20 +59,27 @@ export class RabbitMqService {
             })
 
 
-
-
-
-
             await channel.consume('updateSignalData', async (message) => {
                 const data: updateUserDBInterface = JSON.parse(message.content.toString())
                 channel.ack(message);
             })
 
 
-            await channel.consume('updateWalletData', async (message) => {
+            await channel.consume('walletService', async (message) => {
                 const data: updateWalletDataInterface = JSON.parse(message.content.toString())
+                try {
+                    switch (data.message) {
+                        case 'createNewWallet':
+                            await this.wallet.create(data.data)
+                            break;
 
-                channel.ack(message);
+                        default:
+                            break;
+                    }
+                    channel.ack(message);
+                } catch (error) {
+                    console.log('something went wrong while doing', data.message, `${error}`)
+                }
             })
 
 

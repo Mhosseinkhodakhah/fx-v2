@@ -1,26 +1,49 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose"
-import mongoose, { Document, mongo } from 'mongoose';
+import mongoose, { Document } from 'mongoose';
+
 
 
 
 export interface withdrawInterFace extends Document{
-    payerAdmin: mongoose.Types.ObjectId
+    readonly payerAdmin: {
+        userName : string,
+        profilePicture : string,
+        userId : string,
+    };
     
-    receiver : mongoose.Types.ObjectId
+    readonly receiver : {
+        userName : string,
+        walletId : string,
+        userId : string,
+        profilePicture : string,
+        role : string
+    }
     
-    payMentReason : number
-    status : number
-    amount : number
+    readonly payMentReason : number
+    readonly status : number
+    readonly amount : number
 }
 
 
 @Schema({timestamps : true})
 export class withdraw{
-    @Prop({type : mongoose.Schema.Types.ObjectId , ref : 'user'})
-    payerAdmin : mongoose.Types.ObjectId
+    @Prop({type : Object})
+    payerAdmin : {
+        userName : string,
+        
+        profilePicture : string,
+        
+        userId : string,
+    }
     
-    @Prop({type : mongoose.Schema.Types.ObjectId , ref : 'user'})
-    receiver : mongoose.Types.ObjectId
+    @Prop({type : Object})
+    receiver : {
+        userName : string,
+        walletId : string,
+        userId : string,
+        profilePicture : string,
+        role : string
+    }
     
     @Prop({type : String})
     payMentReason : string           // 0: pay to leader   // 1:  withdrawal   // 2: comision    // 3 : 
