@@ -25,7 +25,6 @@ export class UserController {
   }
 
 
-
   @Patch('/otp/check/:code/:email')
   checlOtpCode(@Req() req: any, @Res() res: any, @Param('code') code: string, @Param('email') email: string) {
     return this.userService.checkOtpCode(req, res, +code, email)

@@ -16,3 +16,13 @@ export interface tokenInterface {
     level: number,
     leaders: string[]
 }
+
+
+export interface walletCreationData {
+    userName: string,
+    email: string,
+    role: number,
+    profile: string,
+    suspend: boolean,
+    userId: string
+}

@@ -14,6 +14,7 @@ import { InterconnectionService } from 'src/interconnection/interconnection.serv
 import { RabbitMqService } from 'src/rabbit-mq/rabbit-mq.service';
 import { leaderLoginDto } from './dto/leaderLoginDTo.dto';
 import { subsCribers, subsInterface } from './entities/subscribers.entity';
+import { walletCreationData } from 'src/interfaces/interfaces.interface';
 const jwt = require('jsonwebtoken')
 
 
@@ -270,7 +271,7 @@ export class UserService {
     user.password = password;
     let Updated = { ...user.toObject() }
     delete Updated._id
-    await this.eventService.updateUser(user._id, Updated , 'updateUser')
+    await this.eventService.updateUser(user._id, Updated, 'updateUser')
     await user.save()
     return {
       message: 'the password succcessfully reset',
@@ -290,7 +291,16 @@ export class UserService {
     await user.updateOne(newData)
     let updateData = { ...newData }
     delete updateData._id
-    await this.eventService.updateUser(user._id, updateData , 'updateUser')
+    await this.eventService.updateUser(user._id, updateData, 'updateUser')
+    let walletData: walletCreationData = {
+      userName: updateData.username,
+      email: updateData.email,
+      role: updateData.role,
+      profile: updateData.profile,
+      suspend: updateData.suspend,
+      userId: req.user._id
+    }
+    await this.eventService.createWallet(walletData)
     return {
       message: 'user updated',
       statusCode: 200,
@@ -305,7 +315,7 @@ export class UserService {
     const updated = await this.userModel.findById(req.user._id)
     let updateData = { ...updated.toObject() }
     delete updateData._id
-    await this.eventService.updateUser(updated._id, updateData , 'updateUser')
+    await this.eventService.updateUser(updated._id, updateData, 'updateUser')
     return {
       message: 'the profile successfullly uploaded',
       statusCode: 200,
@@ -337,7 +347,7 @@ export class UserService {
         let updateData = { ...existance.toObject() }
         await existance.save()
         delete updateData._id
-        await this.eventService.updateUser(existance._id, updateData , 'updateUser')
+        await this.eventService.updateUser(existance._id, updateData, 'updateUser')
         return {
           message: 'otp code sent to user email',
           statusCode: 200,
@@ -353,7 +363,7 @@ export class UserService {
       const newUser = await this.userModel.create(data)
       let updateData = (await this.userModel.findById(newUser._id)).toObject()
       delete updateData._id
-      await this.eventService.updateUser(newUser._id, updateData , 'createNewUser')
+      await this.eventService.updateUser(newUser._id, updateData, 'createNewUser')
       return {
         message: 'otp code sent to user email . . .',
         statusCode: 200,
@@ -479,8 +489,8 @@ export class UserService {
       delete newData1._id
       let newData2 = { ...follower.toObject() }
       delete newData2._id
-      await this.eventService.updateUser(follower._id, newData1 , 'updateUser')
-      await this.eventService.updateUser(following._id, newData2 , 'updateUser')
+      await this.eventService.updateUser(follower._id, newData1, 'updateUser')
+      await this.eventService.updateUser(following._id, newData2, 'updateUser')
       const updated = await this.userModel.findById(userId)
       return {
         message: 'following leaders done!',
@@ -499,8 +509,8 @@ export class UserService {
       delete newData1._id
       let newData2 = { ...follower.toObject() }
       delete newData2._id
-      await this.eventService.updateUser(follower._id, newData1 , 'updateUser')
-      await this.eventService.updateUser(following._id, newData2 , 'updateUser')
+      await this.eventService.updateUser(follower._id, newData1, 'updateUser')
+      await this.eventService.updateUser(following._id, newData2, 'updateUser')
       const updated = await this.userModel.findById(userId)
       return {
         message: 'unfollow leader done!',
@@ -547,8 +557,8 @@ export class UserService {
       delete newData1._id;
       let newData2 = { ...subscribing.toObject() }
       delete newData2._id
-      await this.eventService.updateUser(subscriber2._id, newData1 , 'updateUser')
-      await this.eventService.updateUser(subscribing._id, newData2 , 'updateUser')
+      await this.eventService.updateUser(subscriber2._id, newData1, 'updateUser')
+      await this.eventService.updateUser(subscribing._id, newData2, 'updateUser')
       const updated = await this.userModel.findById(req.user._id)
       return {
         message: 'unsubscribing leader done!',
@@ -575,8 +585,8 @@ export class UserService {
         delete newData1._id;
         let newData2 = { ...subscibing.toObject() }
         delete newData2._id
-        await this.eventService.updateUser(subscriber2._id, newData1 , 'updateUser')
-        await this.eventService.updateUser(subscibing._id, newData2 , 'updateUser')
+        await this.eventService.updateUser(subscriber2._id, newData1, 'updateUser')
+        await this.eventService.updateUser(subscibing._id, newData2, 'updateUser')
         const updated = await this.userModel.findById(req.user._id)
 
         // await this.eventService.payToLeader({
