@@ -38,4 +38,10 @@ export class UserController {
   }
 
 
+  @Get('user/:id')
+  getSpecificUser(@Req() req : any, @Res() res:any , @Param('id') id : string){
+    
+  }
+
+
 }
