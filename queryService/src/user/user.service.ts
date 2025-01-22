@@ -155,6 +155,20 @@ export class UserService {
     }
 
 
+    async getUser(req : any , res : any , id : string){ 
+        const user = await this.userModel.findById(id)
+        if (!user){
+            return {
+                message : 'get specific user failed',
+                error : 'account not found!'
+            }
+        }
+        return {
+            message : 'get specific user done!',
+            data : user
+        }
+    }
+
 
 
 /////////////////////////// last line     

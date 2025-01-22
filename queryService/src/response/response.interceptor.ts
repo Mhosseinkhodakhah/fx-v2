@@ -43,6 +43,5 @@ export class ResponseInterceptor implements NestInterceptor {
     delete newResponse.statusCode
     return response.status(res.statusCode).json(newResponse)
   }
-
 }
 
