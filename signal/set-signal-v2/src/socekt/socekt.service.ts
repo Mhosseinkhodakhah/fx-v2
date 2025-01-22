@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { CreateSocektDto } from './dto/create-socekt.dto';
 import { UpdateSocektDto } from './dto/update-socekt.dto';
 import { Socket } from 'socket.io';
@@ -8,6 +8,8 @@ import mongoose, { Model, Mongoose } from 'mongoose';
 import { signalInterFace } from 'src/signal/entities/signal.entity';
 import { InterconnectionService } from 'src/interconnection/interconnection.service';
 const jwt = require('jsonwebtoken')
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
 
 
 @Injectable()
@@ -17,6 +19,7 @@ export class SocektService {
   private readonly connectedClients: Map<string, Socket> = new Map();
   private readonly socketService: SocektService
   @WebSocketServer() private server: Socket;
+  @Inject(CACHE_MANAGER) private cacheManager: Cache
 
 
 
@@ -103,10 +106,6 @@ export class SocektService {
         const BNBresponse = await fetch(`https://min-api.cryptocompare.com/data/pricemultifull?fsyms=BNB&tsyms=USD&api_key=e41af537fc81ded20a82b3a025c2923b6a6db4dda1ea05ee53e8be2d162a3fad`, { method: 'GET' });
         const BNBres = await BNBresponse.json()
         const lasMarketPrice = await this.cacheManager.get('lastPrices')
-        // console.log('BTC' , BTCres)
-        // console.log('ETH' ,   (lasMarketPrice ?((ETHres.RAW?.ETH?.USD?.PRICE - lasMarketPrice['ETH'])/lasMarketPrice['ETH'])*100 : 0))
-        // console.log('ADA' ,  (lasMarketPrice ?((ADAres?.RAW?.ADA?.USD?.PRICE - lasMarketPrice['ADA'])/lasMarketPrice['ADA'])*100 : 0))
-        // console.log('BNB' ,  (lasMarketPrice ?((BNBres?.RAW?.BNB?.USD?.PRICE - lasMarketPrice['BNB'])/lasMarketPrice['BNB'])*100 : 0))
         const news = await this.#getNews()
         const D = {
           theMostProfitable: [{
