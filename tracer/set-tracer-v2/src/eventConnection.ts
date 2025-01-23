@@ -11,7 +11,7 @@ class RabbitMQConnection {
     constructor() {
         this.connect()
         this.channel.consume(
-            'add-signal',
+            'signalService',
             async (msg) => {
                 {
                     if (!msg) {
