@@ -26,3 +26,11 @@ export interface walletCreationData {
     suspend: boolean,
     userId: string
 }
+
+
+
+export interface payerInterface{
+    payer : {}
+    reciever : {}
+    amount : number
+}

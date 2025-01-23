@@ -589,11 +589,11 @@ export class UserService {
         await this.eventService.updateUser(subscibing._id, newData2, 'updateUser')
         const updated = await this.userModel.findById(req.user._id)
 
-        // await this.eventService.payToLeader({
-        //   payer: user1,
-        //   reciever: user2,
-        //   amount: user2.subScriberFee
-        // }, 0)
+        await this.eventService.payToLeader({
+          payer: user1,
+          reciever: user2,
+          amount: user2.subScriberFee
+        }, 0)
         return {
           message: 'subsCribing leader done!',
           statusCode: 200,
