@@ -101,7 +101,7 @@ export class UserController {
     return this.userService.refreshToken(req, res, body)
   }
 
-  @Post('leaderLogin')
+  @Post('login/leader')
   // @Roles(3)
   // @UseGuards(RoleGaurdGuard)
   loginLeader(@Body() body: leaderLoginDto, @Req() req : any, @Res() res : any){

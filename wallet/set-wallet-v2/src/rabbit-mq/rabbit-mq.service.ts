@@ -19,6 +19,7 @@ export class RabbitMqService {
             setup: (channel: Channel) => {                                   // setup the channel
                 channel.assertQueue('walletService', { durable: true });          // assert the queue
                 channel.assertQueue('createWallet', { durable: true });          // assert the queue for create wallet from user service
+                channel.assertQueue('payToLeader' , {durable : true});           // pay to leader after subscribing him
             },
         });
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////!
@@ -35,6 +36,14 @@ export class RabbitMqService {
                     channel.ack(message);
                 } catch (error) {
                     console.log('error occured while creating new user wallet>>>>>', `${error}`)
+                }
+            })
+            await channel.consume('payToLeader' , async(message)=>{
+                try {
+                    let data = JSON.parse(message.content.toString())
+                    // here we need to check all types first
+                } catch (error) {
+                    console.log('error occured while recording pay to leader>>>>>', `${error}`)
                 }
             })
         })

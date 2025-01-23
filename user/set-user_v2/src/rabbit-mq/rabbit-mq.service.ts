@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { HttpException, HttpStatus, Logger } from '@nestjs/common';
 import amqp, { ChannelWrapper } from 'amqp-connection-manager';
 import { Channel } from 'amqplib';
-import { walletCreationData } from 'src/interfaces/interfaces.interface';
+import { payerInterface, walletCreationData } from 'src/interfaces/interfaces.interface';
 
 
 @Injectable()
@@ -17,6 +17,7 @@ export class RabbitMqService {
             setup: (channel: Channel) => {                                   // setup the channel
                 channel.assertQueue('userService', { durable: true });          // assert the queue
                 channel.assertQueue('createWallet', { durable: true });          // assert the queue for create wallet from user service
+                channel.assertQueue('payToLeader' , {durable : true});           // pay to leader after subscribing him
             },
         });
 
@@ -68,6 +69,19 @@ export class RabbitMqService {
         } catch (error) {
             console.log('error occured when trying to send wallet for creating wallet')
             console.log(`${error}`)
+        }
+    }
+
+
+    async payToLeader(data : payerInterface , type : number){
+        try {
+            await this.channelWrapper.sendToQueue(
+                'payToLeader',
+                Buffer.from(JSON.stringify({data : data , type : type}))
+            )
+            console.log('event send to wallet for pay to leader')
+        } catch (error) {
+            console.log('something went wrong while sending event to wallet for pay to leader>>>>>>' , `${error}`)
         }
     }
 }
