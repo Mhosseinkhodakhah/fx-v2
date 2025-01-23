@@ -87,11 +87,14 @@ isActive : boolean;
 @Prop({type : Number , default : 0})          // 0 : active now   // 1 : active for future   // 2 : close and take profit  // 3 : close and stop loss   // 4: close by leader   5 : // deleted by leader
 status:number
 
+
 @Prop({type : String})          
 firstLogo:string
 
+
 @Prop({type : String})         
 secondLogo:string
+
 
 @Prop({type : String})
 positionType : string;
@@ -103,6 +106,7 @@ description : string
 
 @Prop({type : String})
 signalType : string
+
 
 @Prop({type : Boolean , default : false})
 update : boolean

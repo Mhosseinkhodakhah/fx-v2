@@ -1,12 +1,16 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { HttpException, HttpStatus, Logger } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
 import amqp, { ChannelWrapper } from 'amqp-connection-manager';
-import { Channel } from 'amqplib';
+import { Channel ,ConfirmChannel } from 'amqplib';
+import { Model } from 'mongoose';
+import { signalInterFace } from 'src/signal/entities/signal.entity';
 
 
 @Injectable()
 export class RabbitMqService {
     private channelWrapper: ChannelWrapper;         // make the channel wrapper
+    @InjectModel('signal') private signalModel : Model<signalInterFace>
     constructor() {
         const connection = amqp.connect(['amqp://localhost']);     // connect to rabbit
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////!
@@ -19,23 +23,29 @@ export class RabbitMqService {
             },
         });
 
-        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////!
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////!
         //*its for when the other services want user data
-        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////!
-        // this.channelWrapper.addSetup(async (channel: ConfirmChannel) => {          // add setup for channel
-        //   // await channel.assertQueue('signal', { durable: true });                    // assert the queu
-        //   await channel.consume('getUserData', async (message) => {
-        //     const userId = JSON.parse(message.content.toString())
-        //     console.log('data sent for signal ... ', userId)
-        //     channel.ack(message);
-        //     const userData = await this.userModel.findById(userId)
-        //     console.log('sent user data ...')
-        //     await this.channelWrapper.sendToQueue(
-        //       'responseForGetUserData',
-        //       Buffer.from(JSON.stringify({ userData: userData })),
-        //     );
-        //   })
-        // })
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////!
+        this.channelWrapper.addSetup(async (channel: ConfirmChannel) => {          // add setup for channel
+          // await channel.assertQueue('signal', { durable: true });                    // assert the queu
+          await channel.consume('tracer', async (message) => {
+            const data = JSON.parse(message.content.toString())
+            switch (data.mode) {
+                case 0:
+                    
+                    break;
+                    case 2:
+                    
+                    break;
+                    case 3:
+                    
+                    break;
+            
+                default:
+                    break;
+            }
+          })
+        })
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////!
@@ -53,4 +63,5 @@ export class RabbitMqService {
             console.log(`${error}`)
         }
     }
+
 }
