@@ -1,5 +1,5 @@
 export interface updateUserDBInterface {
-    userId : string;
+    userEmail : string;
     message : string
     userData : {}
 }

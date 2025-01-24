@@ -43,9 +43,9 @@ export class RabbitMqService {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////!
     //*its for updating the user data in query service
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////!
-    async updateUser(userId: string, userData: {} , message : string) {                // send the message in queue
+    async updateUser(userEmail: string, userData: {} , message : string) {                // send the message in queue
         try {
-            let data = { user: userId, data: userData }
+            let data = { userEmail: userEmail, data: userData , message : message }
             await this.channelWrapper.sendToQueue(
                 'userService',
                 Buffer.from(JSON.stringify(data)),
