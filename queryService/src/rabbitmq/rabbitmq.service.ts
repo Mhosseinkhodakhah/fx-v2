@@ -5,7 +5,8 @@ import amqp, { ChannelWrapper } from 'amqp-connection-manager';
 import { Channel } from 'amqplib';
 import { ConfirmChannel } from 'amqplib';
 import { Model } from 'mongoose';
-import { updateUserDBInterface, updateWalletDataInterface } from 'src/interfaces/interfaces.interface';
+import { updateStoryInterface, updateUserDBInterface, updateWalletDataInterface } from 'src/interfaces/interfaces.interface';
+import { storyInterface } from 'src/story/entities/story.entity';
 import { userInterFace } from 'src/user/entities/user.entity';
 import { UserService } from 'src/user/user.service';
 import { walletInterFace } from 'src/wallet/entities/wallet.entity';
@@ -15,7 +16,10 @@ import { walletInterFace } from 'src/wallet/entities/wallet.entity';
 export class RabbitMqService {
     // constructor(private readonly amqpConnection: AmqpConnection) {}            // get amqpConnection in constructor
     private channelWrapper: ChannelWrapper;         // make the channel wrapper
-    constructor(@InjectModel('user') private userModel: Model<userInterFace>, @InjectModel('wallet') private wallet: Model<walletInterFace>) {
+    constructor(@InjectModel('user') private userModel: Model<userInterFace>,
+        @InjectModel('wallet') private wallet: Model<walletInterFace>,
+        @InjectModel('story') private storyModel: Model<storyInterface>
+    ) {
         const connection = amqp.connect(['amqp://localhost']);     // connect to rabbit
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////!
         // its for assert the queues
@@ -26,7 +30,7 @@ export class RabbitMqService {
                 channel.assertQueue('updateSignalData', { durable: true });          // assert the queue
                 channel.assertQueue('walletService', { durable: true });          // assert the queue
                 channel.assertQueue('updateTaskData', { durable: true });          // assert the queue
-                channel.assertQueue('updateStoryData', { durable: true });          // assert the queue
+                channel.assertQueue('storyService', { durable: true });          // assert the queue
             },
         });
 
@@ -40,7 +44,7 @@ export class RabbitMqService {
                     const data: updateUserDBInterface = JSON.parse(message.content.toString())
                     switch (data.message) {
                         case 'updateUser':
-                            const user = await this.userModel.findOne({email : data.userEmail})
+                            const user = await this.userModel.findOne({ email: data.userEmail })
                             let newData = { ...user.toObject(), ...data.userData }
                             await user.updateOne(newData)
                             break;
@@ -89,9 +93,25 @@ export class RabbitMqService {
             })
 
 
-            await channel.consume('updateStoryData', async (message) => {
-                const data: updateUserDBInterface = JSON.parse(message.content.toString())
-                channel.ack(message);
+            await channel.consume('storyService', async (message:any) => {
+                const data: updateStoryInterface = JSON.parse(message.content.toString())
+                try {
+                    switch (data.message) {
+                        case 'create':
+                            await this.storyModel.create(data.story)
+                            break;
+                        case 'update':
+                            let story = await this.storyModel.findOne({mainId : data.mainId})
+                            let newData = {...story.toObject() , ...data.story}
+                            await story.updateOne(newData)
+                        default:
+                            console.log('message undefined>>>>' , data.message)
+                            break;
+                    }
+                    channel.ack(message);
+                } catch (error) {
+                    console.log('error occured in story service queue' , `${error}`)
+                }
             })
         })
 
