@@ -10,3 +10,11 @@ export interface updateWalletDataInterface{
     data : {};
     message : string;
 }
+
+
+
+export interface updateStoryInterface{
+    mainId : string;
+    story : {};
+    message : string
+}
