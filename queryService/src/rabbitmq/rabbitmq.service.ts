@@ -40,7 +40,7 @@ export class RabbitMqService {
                     const data: updateUserDBInterface = JSON.parse(message.content.toString())
                     switch (data.message) {
                         case 'updateUser':
-                            const user = await this.userModel.findById(data.userId)
+                            const user = await this.userModel.findOne({email : data.userEmail})
                             let newData = { ...user.toObject(), ...data.userData }
                             await user.updateOne(newData)
                             break;
