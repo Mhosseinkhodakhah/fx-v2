@@ -1,14 +1,17 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { HttpException, HttpStatus, Logger } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
 import amqp, { ChannelWrapper } from 'amqp-connection-manager';
-import { Channel } from 'amqplib';
+import { Channel , ConfirmChannel} from 'amqplib';
+import { Model } from 'mongoose';
 import { payerInterface, walletCreationData } from 'src/interfaces/interfaces.interface';
+import { userInterFace } from 'src/user/entities/user.entity';
 
 
 @Injectable()
 export class RabbitMqService {
     private channelWrapper: ChannelWrapper;         // make the channel wrapper
-    constructor() {
+    constructor(@InjectModel('user') private userModel : Model<userInterFace>) {
         const connection = amqp.connect(['amqp://localhost']);     // connect to rabbit
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////!
         //*its for assert the queues
@@ -18,26 +21,26 @@ export class RabbitMqService {
                 channel.assertQueue('userService', { durable: true });          // assert the queue
                 channel.assertQueue('createWallet', { durable: true });          // assert the queue for create wallet from user service
                 channel.assertQueue('payToLeader' , {durable : true});           // pay to leader after subscribing him
+                channel.assertQueue('userPoint' , {durable : true});            // a queue for update the user point
             },
         });
 
-        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////!
-        //*its for when the other services want user data
-        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////!
-        // this.channelWrapper.addSetup(async (channel: ConfirmChannel) => {          // add setup for channel
-        //   // await channel.assertQueue('signal', { durable: true });                    // assert the queu
-        //   await channel.consume('getUserData', async (message) => {
-        //     const userId = JSON.parse(message.content.toString())
-        //     console.log('data sent for signal ... ', userId)
-        //     channel.ack(message);
-        //     const userData = await this.userModel.findById(userId)
-        //     console.log('sent user data ...')
-        //     await this.channelWrapper.sendToQueue(
-        //       'responseForGetUserData',
-        //       Buffer.from(JSON.stringify({ userData: userData })),
-        //     );
-        //   })
-        // })
+        /**
+         * while the task service want to update the user point
+         */
+        this.channelWrapper.addSetup(async (channel: ConfirmChannel) => {          // add setup for channel
+          await channel.consume('userPoint', async (message : any) => {
+            const data : {userId : string , point : number} = JSON.parse(message.content.toString())
+            console.log('data sent for signal ... ', data.userId)
+            const userData = await this.userModel.findById(data.userId)
+            if (userData){
+                userData.points += data.point
+                await userData.save()
+                console.log('user point updated successfully')
+            }
+            channel.ack(message);
+          })
+        })
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////!
