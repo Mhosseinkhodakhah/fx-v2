@@ -7,10 +7,11 @@ import { SignalModule } from './signal/signal.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { SignalSchema } from './signal/entities/signal.entity';
 import { RabbitMqService } from './rabbit-mq/rabbit-mq.service';
+import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
   imports: [SocektModule, SignalModule,
-    // CacheModule.register(),
+    CacheModule.register(),
     MongooseModule.forRoot('mongodb+srv://kianlucifer0098:lucifer25255225@cluster0.p5b71z1.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'),
     MongooseModule.forFeature([{ name: 'signal', schema: SignalSchema }]),
     SignalModule],  
