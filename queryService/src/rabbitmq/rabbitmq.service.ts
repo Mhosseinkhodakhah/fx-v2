@@ -5,8 +5,9 @@ import amqp, { ChannelWrapper } from 'amqp-connection-manager';
 import { Channel } from 'amqplib';
 import { ConfirmChannel } from 'amqplib';
 import { Model } from 'mongoose';
-import { updateStoryInterface, updateUserDBInterface, updateWalletDataInterface } from 'src/interfaces/interfaces.interface';
+import { updateStoryInterface, updateTaskInterface, updateUserDBInterface, updateWalletDataInterface } from 'src/interfaces/interfaces.interface';
 import { storyInterface } from 'src/story/entities/story.entity';
+import { taskInterface } from 'src/tasks/entities/task.entity';
 import { userInterFace } from 'src/user/entities/user.entity';
 import { UserService } from 'src/user/user.service';
 import { walletInterFace } from 'src/wallet/entities/wallet.entity';
@@ -18,9 +19,10 @@ export class RabbitMqService {
     private channelWrapper: ChannelWrapper;         // make the channel wrapper
     constructor(@InjectModel('user') private userModel: Model<userInterFace>,
         @InjectModel('wallet') private wallet: Model<walletInterFace>,
-        @InjectModel('story') private storyModel: Model<storyInterface>
+        @InjectModel('story') private storyModel: Model<storyInterface>,
+        @InjectModel('task') private taskModel : Model<taskInterface>
     ) {
-        const connection = amqp.connect(['amqp://localhost']);     // connect to rabbit
+        const connection = amqp.connect(['amqp://localhost']);    // connect to rabbit
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////!
         // its for assert the queues
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////!
@@ -29,7 +31,7 @@ export class RabbitMqService {
                 channel.assertQueue('userService', { durable: true });          // assert the queue
                 channel.assertQueue('updateSignalData', { durable: true });          // assert the queue
                 channel.assertQueue('walletService', { durable: true });          // assert the queue
-                channel.assertQueue('updateTaskData', { durable: true });          // assert the queue
+                channel.assertQueue('taskService', { durable: true });          // assert the queue
                 channel.assertQueue('storyService', { durable: true });          // assert the queue
             },
         });
@@ -87,9 +89,25 @@ export class RabbitMqService {
             })
 
 
-            await channel.consume('updateTaskData', async (message) => {
-                const data: updateUserDBInterface = JSON.parse(message.content.toString())
-                channel.ack(message);
+            await channel.consume('taskService', async (message) => {
+                const data: updateTaskInterface = JSON.parse(message.content.toString())
+                try {
+                    switch (data.message) {
+                        case 'create':
+                            await this.taskModel.create(data.task)
+                            break;
+                        case 'update':
+                            let task = await this.taskModel.findOne({mainId : data.mainId})
+                            let newData = {...task.toObject() , ...task}
+                            await task.updateOne(newData)
+                            break;
+                        default:
+                            break;
+                        }
+                        channel.ack(message);
+                } catch (error) {
+                    console.log('error occured while doing task service >>>>' , `${error}`)
+                }
             })
 
 
