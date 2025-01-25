@@ -28,23 +28,11 @@ export class RabbitMqService {
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////!
         this.channelWrapper.addSetup(async (channel: ConfirmChannel) => {          // add setup for channel
           // await channel.assertQueue('signal', { durable: true });                    // assert the queu
-          await channel.consume('tracer', async (message) => {
+          await channel.consume('tracer', async (message:any) => {
             const data = JSON.parse(message.content.toString())
-            switch (data.mode) {
-                case 0:
-                    
-                    break;
-                    case 2:
-                    
-                    break;
-                    case 3:
-                    
-                    break;
-            
-                default:
-                    break;
-            }
-          })
+            await this.signalModel.findOneAndUpdate(data.signalName , {status : data.mode})
+            channel.ack(message);
+        })
         })
     }
 

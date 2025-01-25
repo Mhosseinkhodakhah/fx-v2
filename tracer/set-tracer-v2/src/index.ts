@@ -1,6 +1,7 @@
 import express from 'express'
 import mqConnection from "./eventConnection";
 import connection from './DB/connection';
+import { signalModel } from './DB/model';
 
 
 connection()
@@ -21,5 +22,9 @@ const send = async () => {
 
 
 setInterval(async () => {
-    await send()
+    let allSignals = await signalModel.find({status : 0})
+    allSignals.forEach((elem:any)=>{
+        let name = elem.signalName.split('-')[0]
+
+    })
 }, 1000)

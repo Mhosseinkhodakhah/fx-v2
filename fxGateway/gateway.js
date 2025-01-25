@@ -129,7 +129,6 @@ app.use("/api/getUsers" , rooter.proxy(process.env.USER_G_SERVICE));        // r
 
 app.use("/api/setUsers" , rooter.proxy(process.env.USER_S_SERVICE));        // routing the req to set user service
 
-
 app.use("/api/getContent" , rooter.proxy(process.env.CONTENT_G_SERVICE) );  // routing the req to get content service
 
 app.use("/api/setContent" , rooter.proxy(process.env.CONTENT_S_SERVICE) );  // routing the req to set content service
@@ -155,7 +154,14 @@ app.use("/api/setTask" , rooter.proxy(process.env.TASK_SERVICE) );       // rout
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-app.use("/api/v2/setUsers" , rooter.proxy(process.env.USER_V2));        // routing the req to user service
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+app.use("/api/v2/user" , rooter.proxy(process.env.USER_V2));        // routing the req to user service
 
 app.use("/api/v2/query" , rooter.proxy(process.env.QUERY));        // routing the req to get query service
+
+app.use("/api/v2/story" , rooter.proxy(process.env.USER_V2));        // routing the req to story service
+
+app.use("/api/v2/task" , rooter.proxy(process.env.USER_V2));        // routing the req to task service
+
+app.use("/api/v2/wallet" , rooter.proxy(process.env.USER_V2));        // routing the req to wallet service
+

@@ -13,7 +13,7 @@ export class WalletService {
 
   constructor(@InjectModel('wallet') private walletModel: Model<walletInterFace>,
     @InjectModel('withdraw') private withdrawal: Model<withdrawInterFace>,
-    @InjectModel('TransAction') private TransAction: Model<transActionInterFace>) {}
+    @InjectModel('transAction') private TransAction: Model<transActionInterFace>) {}
 
 
   async createWallet(req : any, res:any, request) {

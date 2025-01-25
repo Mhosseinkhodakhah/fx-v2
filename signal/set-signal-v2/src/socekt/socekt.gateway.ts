@@ -7,7 +7,6 @@ import { InterconnectionService } from 'src/interconnection/interconnection.serv
 import { InjectModel } from '@nestjs/mongoose';
 import { signalInterFace } from 'src/signal/entities/signal.entity';
 import { Model } from 'mongoose';
-const jwt = require('jsonwebtoken')
 import { Cron, CronExpression } from '@nestjs/schedule';
 
 

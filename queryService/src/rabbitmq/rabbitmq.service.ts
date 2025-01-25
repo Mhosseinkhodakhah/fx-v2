@@ -1,16 +1,20 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { HttpException, HttpStatus, Logger } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import amqp, { ChannelWrapper } from 'amqp-connection-manager';
-import { Channel } from 'amqplib';
-import { ConfirmChannel } from 'amqplib';
-import { Model } from 'mongoose';
+import { Inject, Injectable} from '@nestjs/common';
+import { HttpException, HttpStatus, Logger} from '@nestjs/common';
+import { InjectModel} from '@nestjs/mongoose';
+import amqp, { ChannelWrapper} from 'amqp-connection-manager';
+import { Channel} from 'amqplib';
+import { ConfirmChannel} from 'amqplib';
+import { Model} from 'mongoose';
 import { updateStoryInterface, updateTaskInterface, updateUserDBInterface, updateWalletDataInterface } from 'src/interfaces/interfaces.interface';
-import { storyInterface } from 'src/story/entities/story.entity';
-import { taskInterface } from 'src/tasks/entities/task.entity';
-import { userInterFace } from 'src/user/entities/user.entity';
-import { UserService } from 'src/user/user.service';
-import { walletInterFace } from 'src/wallet/entities/wallet.entity';
+import { signalInterFace} from 'src/signal/entities/signal.entity';
+import { storyInterface} from 'src/story/entities/story.entity';
+import { taskInterface} from 'src/tasks/entities/task.entity';
+import { userInterFace} from 'src/user/entities/user.entity';
+import { walletInterFace} from 'src/wallet/entities/wallet.entity';
+
+
+
+
 
 
 @Injectable()
@@ -20,7 +24,8 @@ export class RabbitMqService {
     constructor(@InjectModel('user') private userModel: Model<userInterFace>,
         @InjectModel('wallet') private wallet: Model<walletInterFace>,
         @InjectModel('story') private storyModel: Model<storyInterface>,
-        @InjectModel('task') private taskModel : Model<taskInterface>
+        @InjectModel('task') private taskModel : Model<taskInterface>,
+        @InjectModel('signal') private signalModel : Model<signalInterFace>
     ) {
         const connection = amqp.connect(['amqp://localhost']);    // connect to rabbit
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////!
@@ -29,7 +34,7 @@ export class RabbitMqService {
         this.channelWrapper = connection.createChannel({             // crathe the channel
             setup: (channel: Channel) => {                                    // setup the channel
                 channel.assertQueue('userService', { durable: true });          // assert the queue
-                channel.assertQueue('updateSignalData', { durable: true });          // assert the queue
+                channel.assertQueue('signalService', { durable: true });          // assert the queue
                 channel.assertQueue('walletService', { durable: true });          // assert the queue
                 channel.assertQueue('taskService', { durable: true });          // assert the queue
                 channel.assertQueue('storyService', { durable: true });          // assert the queue
@@ -65,7 +70,7 @@ export class RabbitMqService {
             })
 
 
-            await channel.consume('updateSignalData', async (message) => {
+            await channel.consume('signalService', async (message) => {
                 const data: updateUserDBInterface = JSON.parse(message.content.toString())
                 channel.ack(message);
             })
@@ -159,6 +164,4 @@ export class RabbitMqService {
         //   })
         // })
     }
-
-
 }
