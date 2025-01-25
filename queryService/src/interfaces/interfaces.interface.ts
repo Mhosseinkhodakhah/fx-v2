@@ -11,6 +11,11 @@ export interface updateWalletDataInterface{
     message : string;
 }
 
+export interface updateTaskInterface{
+    mainId : string;
+    task : {};
+    message : string;
+}
 
 
 export interface updateStoryInterface{
