@@ -23,3 +23,11 @@ export interface updateStoryInterface{
     story : {};
     message : string
 }
+
+
+export interface CacheManagerOptions {
+    store?:  any
+    ttl?: number;
+    max?: number;
+    isCacheableValue?: (value: any) => boolean;
+}

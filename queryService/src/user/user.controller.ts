@@ -23,24 +23,23 @@ export class UserController {
   }
 
   @Get('/branches')
-  getLeaders(@Req() req : any, @Res() res : any) {
+  getLeaders(@Req() req: any, @Res() res: any) {
     return this.userService.usersBranches(req, res)
   }
 
   @Get('leader/:id')
-  leader(@Req() req : any, @Res() res :any, @Param('id') leaderId: string) {
+  leader(@Req() req: any, @Res() res: any, @Param('id') leaderId: string) {
     return this.userService.getSpecificLeader(req, res, leaderId)
   }
 
   @Get('search/:search')
-  search(@Req() req : any, @Res() res:any , @Param('search') search : string) {
-    return this.userService.searcher(req, res , search)
+  search(@Req() req: any, @Res() res: any, @Param('search') search: string) {
+    return this.userService.searcher(req, res, search)
   }
 
-
   @Get('user/:id')
-  getSpecificUser(@Req() req : any, @Res() res:any , @Param('id') id : string){
-    
+  getSpecificUser(@Req() req: any, @Res() res: any, @Param('id') id: string) {
+    return this.userService.getUser(req, res, id)
   }
 
 

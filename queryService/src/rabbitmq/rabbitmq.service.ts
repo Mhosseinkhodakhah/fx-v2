@@ -16,7 +16,6 @@ import { walletInterFace} from 'src/wallet/entities/wallet.entity';
 
 
 
-
 @Injectable()
 export class RabbitMqService {
     // constructor(private readonly amqpConnection: AmqpConnection) {}            // get amqpConnection in constructor

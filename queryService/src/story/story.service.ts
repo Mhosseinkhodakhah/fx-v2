@@ -4,11 +4,13 @@ import { UpdateStoryDto } from './dto/update-story.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { storyInterface } from './entities/story.entity';
+import { RedisHandlerService } from 'src/redis-handler/redis-handler.service';
 
 @Injectable()
 export class StoryService {
   
-  @InjectModel('story') private storyModel : Model<storyInterface>
+  @InjectModel('story') private storyModel : Model<storyInterface>;
+  private readonly cacheManager : RedisHandlerService;
   
   async getAllStories(req:any, res:any) {
     const user = req.user._id;
