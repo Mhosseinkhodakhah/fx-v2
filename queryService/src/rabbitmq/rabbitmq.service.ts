@@ -51,9 +51,12 @@ export class RabbitMqService {
                     const data: updateUserDBInterface = JSON.parse(message.content.toString())
                     switch (data.message) {
                         case 'updateUser':
+                            console.log(data.userEmail)
                             const user = await this.userModel.findOne({ email: data.userEmail })
-                            let newData = { ...user.toObject(), ...data.userData }
-                            await user.updateOne(newData)
+                            if (user){
+                                let newData = { ...user.toObject(), ...data.userData }
+                                await user.updateOne(newData)
+                            }
                             break;
 
                         case 'createNewUser':
@@ -63,6 +66,7 @@ export class RabbitMqService {
                         default:
                             break;
                     }
+                    console.log('done')
                     channel.ack(message);
                 } catch (error) {
                     console.log('error occured in updating user database . . .====>>>>>', error)

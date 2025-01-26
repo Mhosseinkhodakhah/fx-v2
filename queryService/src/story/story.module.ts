@@ -13,7 +13,7 @@ import { SignalSchema } from 'src/signal/entities/signal.entity';
 import { Withdraw } from 'src/wallet/entities/withdraw.entity';
 
 @Module({
-  imports: [MongooseModule.forRoot(process.env.MONGO_CONNECTION_STRING),
+  imports: [MongooseModule.forRoot('mongodb+srv://kianlucifer:Lucifer25255225@cluster0.kcuqf.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'),
   MongooseModule.forFeature([
       { name: 'user', schema: UserSchema },
     { name: 'transAction', schema: TransAction },
