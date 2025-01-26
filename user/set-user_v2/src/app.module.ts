@@ -45,5 +45,7 @@ import { RoleGaurdGuard } from './role-gaurd/role-gaurd.guard';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(auth).forRoutes(UserController)}
+    // consumer.apply(auth).forRoutes(UserController),
+    consumer.apply(auth).exclude({path : 'user/register' , method : RequestMethod.POST})
+  }
 }

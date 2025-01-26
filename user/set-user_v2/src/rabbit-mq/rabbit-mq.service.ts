@@ -48,6 +48,7 @@ export class RabbitMqService {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////!
     async updateUser(userEmail: string, userData: {} , message : string) {                // send the message in queue
         try {
+            console.log('event coming ready . . .')
             let data = { userEmail: userEmail, data: userData , message : message }
             await this.channelWrapper.sendToQueue(
                 'userService',
