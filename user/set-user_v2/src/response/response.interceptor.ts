@@ -6,6 +6,7 @@ import { format } from 'date-fns';
 export class ResponseInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     return next.handle().pipe(map((res:any)=>{
+      console.log('final test')
       this.responseHandler(res, context)
     }))
   }
@@ -13,7 +14,8 @@ export class ResponseInterceptor implements NestInterceptor {
     const ctx = context.switchToHttp();
     const response = ctx.getResponse();
     const request = ctx.getRequest();
- 
+    console.log('final test2')
+    
     let newResponse = { success : (res.statusCode == 200) ? true : false ,  
       ...res , 
       error : (res.error) ? res.error : null ,

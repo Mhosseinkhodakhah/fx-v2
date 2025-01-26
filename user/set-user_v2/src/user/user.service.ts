@@ -326,6 +326,7 @@ export class UserService {
 
   async register(req: any, res: any, body: regisrtDto) {
     try {
+      console.log('method is true')
       const existance = await this.userModel.findOne({ email: body.email })
       if (existance) {
         if (existance.usingCode) {

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Req, Res, Put, UseInterceptors, UploadedFile, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Req, Res, Put, UseInterceptors, UploadedFile, UseGuards, ValidationPipe } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -20,7 +20,7 @@ export class UserController {
   constructor(private readonly userService: UserService) { }
 
   @Post('/register')
-  firstRegsiter(@Req() req: any, @Res() res: any, @Body() body: regisrtDto) {
+  firstRegsiter(@Req() req: any, @Res() res: any, @Body(new ValidationPipe()) body: regisrtDto) {
     return this.userService.register(req, res, body)
   }
 
@@ -32,7 +32,7 @@ export class UserController {
 
 
   @Post('/login')
-  loginUser(@Req() req: any, @Res() res: any, @Body() body: loginDto) {
+  loginUser(@Req() req: any, @Res() res: any, @Body(new ValidationPipe()) body: loginDto) {
     return this.userService.loginUser(req, res, body)
   }
 
@@ -44,7 +44,7 @@ export class UserController {
 
 
   @Patch('/password/set/:userEmail')
-  finalResetPassword(@Req() req: any, @Res() res: any, @Body() body: passwordBody, @Param('userEmail') userEmail: string) {
+  finalResetPassword(@Req() req: any, @Res() res: any, @Body(new ValidationPipe()) body: passwordBody, @Param('userEmail') userEmail: string) {
     return this.userService.finalResetPasswor(req, res, body, userEmail)
   }
 
@@ -55,32 +55,32 @@ export class UserController {
   }
 
   @Put('/update')
-  updateUser(@Req() req: any, @Res() res: any, @Body() body: any) {
+  updateUser(@Req() req: any, @Res() res: any, @Body(new ValidationPipe()) body: any) {
     return this.userService.updateUser(req, res, body)
   }
 
 
-  @Post('upload/profile')
-  @UseInterceptors(FileInterceptor('profile', {
-    storage: diskStorage({
-      destination: '/home/uploadedFiles/profiles'
-      , filename: (req, file, cb) => {
-        console.log(file)
-        // Generating a 32 random chars long string
-        const randomName = Array(32).fill(null).map(() => (Math.round(Math.random() * 16)).toString(16)).join('')
-        //Calling the callback passing the random name generated with the original extension name
-        cb(null, `${randomName}${extname(file.originalname)}`)
-      }
-    })
-  }))
-  async upload(@Req() req, @Res() res, @UploadedFile(
-  ) profile) {
-    // console.log()
-    console.log(profile)
-    console.log(req.user)
-    return this.userService.uploadPictureProfile(req, res, profile.filename)
-    // return profile
-  }
+  // @Post('upload/profile')
+  // @UseInterceptors(FileInterceptor('profile', {
+  //   storage: diskStorage({
+  //     destination: '/home/uploadedFiles/profiles'
+  //     , filename: (req, file, cb) => {
+  //       console.log(file)
+  //       // Generating a 32 random chars long string
+  //       const randomName = Array(32).fill(null).map(() => (Math.round(Math.random() * 16)).toString(16)).join('')
+  //       //Calling the callback passing the random name generated with the original extension name
+  //       cb(null, `${randomName}${extname(file.originalname)}`)
+  //     }
+  //   })
+  // }))
+  // async upload(@Req() req, @Res() res, @UploadedFile(
+  // ) profile) {
+  //   // console.log()
+  //   console.log(profile)
+  //   console.log(req.user)
+  //   return this.userService.uploadPictureProfile(req, res, profile.filename)
+  //   // return profile
+  // }
 
 
   @Get('/leader/:leaderId')
@@ -97,14 +97,14 @@ export class UserController {
   }
 
   @Post('/token/refresh')
-  refreshToken(@Req() req: any, @Res() res: any, @Body() body: refreshTokenDTO) {
+  refreshToken(@Req() req: any, @Res() res: any, @Body(new ValidationPipe()) body: refreshTokenDTO) {
     return this.userService.refreshToken(req, res, body)
   }
 
   @Post('login/leader')
   // @Roles(3)
   // @UseGuards(RoleGaurdGuard)
-  loginLeader(@Body() body: leaderLoginDto, @Req() req : any, @Res() res : any){
+  loginLeader(@Body(new ValidationPipe()) body: leaderLoginDto, @Req() req : any, @Res() res : any){
     return this.userService.loginLeader(body , req , res)
   }
 
