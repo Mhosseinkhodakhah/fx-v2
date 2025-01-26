@@ -1,7 +1,7 @@
 export interface updateUserDBInterface {
     userEmail : string;
     message : string
-    userData : {}
+    data : {}
 }
 
 

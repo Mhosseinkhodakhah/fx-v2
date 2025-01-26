@@ -46,6 +46,9 @@ import { RoleGaurdGuard } from './role-gaurd/role-gaurd.guard';
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     // consumer.apply(auth).forRoutes(UserController),
-    consumer.apply(auth).exclude({path : 'user/register' , method : RequestMethod.POST})
+    consumer.apply(auth).exclude({path : 'user/register' , method : RequestMethod.POST} , 
+      {path : 'user/otp/check/:code/:email' , method : RequestMethod.PATCH},
+    {path : 'user/login' , method : RequestMethod.POST}
+    ).forRoutes(UserController)
   }
 }
