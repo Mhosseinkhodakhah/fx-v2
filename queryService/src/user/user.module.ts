@@ -10,6 +10,7 @@ import { wallet, WalletSchema } from 'src/wallet/entities/wallet.entity';
 import { storySchema } from 'src/story/entities/story.entity';
 import { taskModel } from 'src/tasks/entities/task.entity';
 import { SignalSchema } from 'src/signal/entities/signal.entity';
+import { RedisHandlerService } from 'src/redis-handler/redis-handler.service';
 
 @Module({
   imports:[
@@ -23,6 +24,6 @@ import { SignalSchema } from 'src/signal/entities/signal.entity';
   ])
   ],
   controllers: [UserController],
-  providers: [UserService , RabbitMqService],
+  providers: [UserService , RabbitMqService , RedisHandlerService],
 })
 export class UserModule {}

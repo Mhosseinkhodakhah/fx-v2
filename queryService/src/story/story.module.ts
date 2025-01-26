@@ -11,6 +11,7 @@ import { WalletSchema } from 'src/wallet/entities/wallet.entity';
 import { subScribers } from 'src/user/entities/subscribers.entity';
 import { SignalSchema } from 'src/signal/entities/signal.entity';
 import { Withdraw } from 'src/wallet/entities/withdraw.entity';
+import { RedisHandlerService } from 'src/redis-handler/redis-handler.service';
 
 @Module({
   imports: [MongooseModule.forRoot('mongodb+srv://kianlucifer:Lucifer25255225@cluster0.kcuqf.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'),
@@ -26,6 +27,6 @@ import { Withdraw } from 'src/wallet/entities/withdraw.entity';
     ])
   ],
   controllers: [StoryController],
-  providers: [StoryService , RabbitMqService],
+  providers: [StoryService , RabbitMqService , RedisHandlerService],
 })
 export class StoryModule { }
