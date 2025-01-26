@@ -49,18 +49,19 @@ export class RabbitMqService {
             await channel.consume('userService', async (message: any) => {
                 try {
                     const data: updateUserDBInterface = JSON.parse(message.content.toString())
+                    console.log(data)
                     switch (data.message) {
                         case 'updateUser':
                             console.log(data.userEmail)
                             const user = await this.userModel.findOne({ email: data.userEmail })
                             if (user){
-                                let newData = { ...user.toObject(), ...data.userData }
+                                let newData = { ...user.toObject(), ...data.data }
                                 await user.updateOne(newData)
                             }
                             break;
 
                         case 'createNewUser':
-                            await this.userModel.create(data.userData)
+                            await this.userModel.create(data.data)
                             break;
 
                         default:
@@ -83,8 +84,10 @@ export class RabbitMqService {
             await channel.consume('walletService', async (message) => {
                 const data: updateWalletDataInterface = JSON.parse(message.content.toString())
                 try {
+                    console.log('walelt event recieved . . .' , data)
                     switch (data.message) {
                         case 'createNewWallet':
+                            console.log('here passed  . . . ')
                             await this.wallet.create(data.data)
                             break;
 

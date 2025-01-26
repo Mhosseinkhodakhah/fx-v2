@@ -29,10 +29,11 @@ export class RabbitMqService {
             await channel.consume('createWallet', async (message) => {
                 try {
                     const user = JSON.parse(message.content.toString())
+                    console.log('wallet event recieved . . .' , user)
                     const newWallet = await this.walletModel.create({ owner: user })
-                    const newWallet2= {...newWallet}
+                    const newWallet2= {...newWallet.toObject()}
                     delete newWallet2._id
-                    await this.walletEvent(newWallet2.owner , newWallet2 , 'createNewWallet')
+                    this.walletEvent(newWallet2.owner , newWallet2 , 'createNewWallet')
                     channel.ack(message);
                 } catch (error) {
                     console.log('error occured while creating new user wallet>>>>>', `${error}`)
@@ -54,7 +55,7 @@ export class RabbitMqService {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////!
     async walletEvent(user:any, walletData: {}, message: string) {                // send the message in queue
         try {
-            let data = { user: user, data: walletData }
+            let data = { user: user, data: walletData , message : message }
             await this.channelWrapper.sendToQueue(
                 'walletService',
                 Buffer.from(JSON.stringify(data)),
