@@ -22,7 +22,9 @@ import { RedisOptions } from 'redis.constant';
 import { RedisHandlerService } from './redis-handler/redis-handler.service';
 
 @Module({
-  imports: [MongooseModule.forRoot('mongodb+srv://kianlucifer:Lucifer25255225@cluster0.kcuqf.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'),
+  imports: [ConfigModule.forRoot({ envFilePath: 'config.env', isGlobal: true }),
+  MongooseModule.forRoot('mongodb+srv://kianlucifer:Lucifer25255225@cluster0.kcuqf.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'),
+
   MongooseModule.forFeature([
     { name: 'user', schema: UserSchema },
     { name: 'transAction', schema: TransAction },
@@ -33,9 +35,8 @@ import { RedisHandlerService } from './redis-handler/redis-handler.service';
     { name: 'signal', schema: SignalSchema },
     { name: 'withdraw', schema: Withdraw }
   ]),
-  CacheModule.register({isGlobal:true}),
+  CacheModule.register({ isGlobal: true }),
   CacheModule.registerAsync(RedisOptions),
-  ConfigModule.forRoot({ envFilePath: 'config.env', isGlobal: true })
     , UserModule, WalletModule, SignalModule, StoryModule, TasksModule],
   controllers: [AppController],
   providers: [AppService, RabbitMqService, RedisHandlerService],
