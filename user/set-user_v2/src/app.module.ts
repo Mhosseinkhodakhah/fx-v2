@@ -48,7 +48,8 @@ export class AppModule implements NestModule {
     // consumer.apply(auth).forRoutes(UserController),
     consumer.apply(auth).exclude({path : 'user/register' , method : RequestMethod.POST} , 
       {path : 'user/otp/check/:code/:email' , method : RequestMethod.PATCH},
-    {path : 'user/login' , method : RequestMethod.POST}
+    {path : 'user/login' , method : RequestMethod.POST},
+    {path : '/home/info' , method : RequestMethod.GET}
     ).forRoutes(UserController)
   }
 }

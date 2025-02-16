@@ -410,7 +410,7 @@ export class UserService {
     existinguser.otpCodeTime = 0;
     await existinguser.save()
     const user = await this.userModel.findById(existinguser._id).select(['-password'])
-    console.log('data' , user)
+    console.log('data', user)
     const userData = {
       _id: user._id,
       username: user.username,
@@ -453,6 +453,23 @@ export class UserService {
       }
     }
   }
+
+
+
+  async getHomePageInfo(req: any, res: any) {
+    const userId = req.user._id;
+
+    const leaders = await this.userModel.find({ role: 3 }).limit(4).select(['-password', '-refreshToken'])
+    console.log('cache heat done!')
+
+    let transActions = await this.interConnection.getAllUserTransAction(req.user._id)
+    return {
+      message: 'getting leaders and transAction data of user',
+      statusCode: 200,
+      data: { leaders: leaders, transActions: transActions },
+    }
+  }
+
 
 
   async folowSomone(req: any, res: any, userId: string) {
