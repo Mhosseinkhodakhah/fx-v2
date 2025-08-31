@@ -15,7 +15,7 @@ import { leaderLoginDto } from './dto/leaderLoginDTo.dto';
 
 
 
-@Controller('user')
+@Controller('auth')
 export class UserController {
   constructor(private readonly userService: UserService) { }
 
