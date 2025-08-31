@@ -30,18 +30,15 @@ export class UserController {
     return this.userService.checkOtpCode(req, res, +code, email)
   }
 
-
   @Post('/login')
   loginUser(@Req() req: any, @Res() res: any, @Body(new ValidationPipe()) body: loginDto) {
     return this.userService.loginUser(req, res, body)
   }
 
-
   @Get('/forgetPassword/:userEmail')
   forgetPassword(@Req() req: any, @Res() res: any, @Param('userEmail') userEmail: string) {
     return this.userService.forgetPassword(req, res, userEmail)
   }
-
 
   @Patch('/password/set/:userEmail')
   finalResetPassword(@Req() req: any, @Res() res: any, @Body(new ValidationPipe()) body: passwordBody, @Param('userEmail') userEmail: string) {
