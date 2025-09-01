@@ -23,7 +23,7 @@ import { RoleGaurdGuard } from './role-gaurd/role-gaurd.guard';
     MailerModule.forRoot({
       transport: {
         host: 'smtp.gmail.com',
-        port: 465,
+        port: 587,
         secure: true,
         auth: {
           user: 'kianlucifer0098@gmail.com',
