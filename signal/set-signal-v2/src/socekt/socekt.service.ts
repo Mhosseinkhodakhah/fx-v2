@@ -212,10 +212,12 @@ const clientId = socket.id;
   async getAllData() {
     try {
       const currencies = await this.cacheManager.get('lastPrices')
-      if (currencies) {
-        return currencies
-        // return this.server.to(client.id).emit('allCurrencies', { all: currencies })
-      } else {
+      // if (currencies) {
+      //   console.log('first level')
+      //   return currencies
+      //   // return this.server.to(client.id).emit('allCurrencies', { all: currencies })
+      // } else {
+        console.log('secondLeve level')
         const symbols = {
           "BTC": "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png", "ETH": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png", "USDT": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png", "BNB": "https://s2.coinmarketcap.com/static/img/coins/64x64/1839.png", "SOL": "https://s2.coinmarketcap.com/static/img/coins/64x64/5426.png", "USDC": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png", "XRP": "https://s2.coinmarketcap.com/static/img/coins/64x64/52.png", "TON": "https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png", "DOGE": "https://s2.coinmarketcap.com/static/img/coins/64x64/74.png", "ADA": "https://s2.coinmarketcap.com/static/img/coins/64x64/2010.png", "TRX": "https://s2.coinmarketcap.com/static/img/coins/64x64/1958.png", "AVAX": "https://s2.coinmarketcap.com/static/img/coins/64x64/5805.png", "SHIB": "https://s2.coinmarketcap.com/static/img/coins/64x64/5994.png", "DOT": "https://s2.coinmarketcap.com/static/img/coins/64x64/6636.png", "LINK": "https://s2.coinmarketcap.com/static/img/coins/64x64/1975.png", "BCH": "https://s2.coinmarketcap.com/static/img/coins/64x64/1831.png", "DAI": "https://s2.coinmarketcap.com/static/img/coins/64x64/4943.png", "LEO": "https://s2.coinmarketcap.com/static/img/coins/64x64/3957.png", "NEAR": "https://s2.coinmarketcap.com/static/img/coins/64x64/6535.png", "MATIC": "https://s2.coinmarketcap.com/static/img/coins/64x64/3890.png", "UNI": "https://s2.coinmarketcap.com/static/img/coins/64x64/7083.png",
           "LTC": "https://s2.coinmarketcap.com/static/img/coins/64x64/2.png", "KAS": "https://s2.coinmarketcap.com/static/img/coins/64x64/20396.png", "PEPE": "https://s2.coinmarketcap.com/static/img/coins/64x64/24478.png", "ICP": "https://s2.coinmarketcap.com/static/img/coins/64x64/8916.png", "FET": "https://s2.coinmarketcap.com/static/img/coins/64x64/3773.png", "ETC": "https://s2.coinmarketcap.com/static/img/coins/64x64/1321.png", "XMR": "https://s2.coinmarketcap.com/static/img/coins/64x64/328.png", "APT": "https://s2.coinmarketcap.com/static/img/coins/64x64/21794.png", "XLM": "https://s2.coinmarketcap.com/static/img/coins/64x64/512.png", "RNDR": "https://s2.coinmarketcap.com/static/img/coins/64x64/5690.png", "HBAR": "https://s2.coinmarketcap.com/static/img/coins/64x64/4642.png", "ATOM": "https://s2.coinmarketcap.com/static/img/coins/64x64/3794.png", "CRO": "https://s2.coinmarketcap.com/static/img/coins/64x64/3635.png", "OKB": "https://s2.coinmarketcap.com/static/img/coins/64x64/3897.png",
@@ -241,10 +243,10 @@ const clientId = socket.id;
 
         return allData
         // return this.server.to(client.id).emit('allCurrencies', { all: allData })
-      }
+      
     } catch (error) {
       console.log('error in getting all currency from socket', error)
-      return error.MessageBody
+      return error
       // return this.server.to(client.id).emit('allCurrencies', { error: error.MessageBody  })
     }
 
