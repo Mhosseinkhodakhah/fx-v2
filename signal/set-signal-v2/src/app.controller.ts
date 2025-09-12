@@ -5,13 +5,18 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService , private readonly currenciApi : CurrenciesService) {}
+  constructor(private readonly appService: AppService , private readonly currenciApi : CurrenciesService) {
+
+    setInterval(()=>{
+      console.log('start cronjob')
+      this.handleCronApi()
+    } , 1000)
+
+  }
 
 
-  @Cron(CronExpression.EVERY_10_SECONDS)
   async handleCronApi(){
-    console.log('start cronjob')
-    await this.currenciApi.getAllCurrencies()
+    this.currenciApi.getAllCurrencies()
   }
 
   @Get()
