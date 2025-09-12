@@ -18,18 +18,4 @@ export class SignalController {
     return this.signalService.createFreeSignal(req , res , body)
   }
 
-
-  // @Patch('updateSignal/:signalId')
-
-
-
-
-  // @Put('closeSignal/:signalId')
-
-
-
-
-  // @Patch('expireSignal/:id')
-
-
 }
