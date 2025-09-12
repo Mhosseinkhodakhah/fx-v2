@@ -22,7 +22,6 @@ export class SocektService {
   @Inject(CACHE_MANAGER) private cacheManager: Cache
 
 
-
   /**
   * its when user connecting to server at first and we get user data from query service and cache it and validate users token here
   * @param socket 
@@ -35,12 +34,12 @@ export class SocektService {
     let tokenVerification = await this.#checkToken(token)
 
     if (!tokenVerification) {
-      return this.server.to(socket.id).emit('allSignals', { error: 'token Expired!' })
+      return this.server.emit('allSignals', { error: 'token Expired!' })
     }
 
     const userData = await this.queryService.reqForGetUser(tokenVerification._id)
     if (!userData.success) {
-      return this.server.to(socket.id).emit('allSignals', { error: 'token Expired!' })
+      return this.server.emit('allSignals', { error: 'token Expired!' })
     }
     this.connectedClients.set(socket.id, userData.data)
 
@@ -221,7 +220,7 @@ export class SocektService {
     try {
       const currencies = await this.cacheManager.get('lastPrices')
       if (currencies) {
-        return this.server.to(client.id).emit('allCurrencies', { all: currencies })
+        return this.server.emit('allCurrencies', { all: currencies })
       } else {
         const symbols = {
           "BTC": "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png", "ETH": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png", "USDT": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png", "BNB": "https://s2.coinmarketcap.com/static/img/coins/64x64/1839.png", "SOL": "https://s2.coinmarketcap.com/static/img/coins/64x64/5426.png", "USDC": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png", "XRP": "https://s2.coinmarketcap.com/static/img/coins/64x64/52.png", "TON": "https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png", "DOGE": "https://s2.coinmarketcap.com/static/img/coins/64x64/74.png", "ADA": "https://s2.coinmarketcap.com/static/img/coins/64x64/2010.png", "TRX": "https://s2.coinmarketcap.com/static/img/coins/64x64/1958.png", "AVAX": "https://s2.coinmarketcap.com/static/img/coins/64x64/5805.png", "SHIB": "https://s2.coinmarketcap.com/static/img/coins/64x64/5994.png", "DOT": "https://s2.coinmarketcap.com/static/img/coins/64x64/6636.png", "LINK": "https://s2.coinmarketcap.com/static/img/coins/64x64/1975.png", "BCH": "https://s2.coinmarketcap.com/static/img/coins/64x64/1831.png", "DAI": "https://s2.coinmarketcap.com/static/img/coins/64x64/4943.png", "LEO": "https://s2.coinmarketcap.com/static/img/coins/64x64/3957.png", "NEAR": "https://s2.coinmarketcap.com/static/img/coins/64x64/6535.png", "MATIC": "https://s2.coinmarketcap.com/static/img/coins/64x64/3890.png", "UNI": "https://s2.coinmarketcap.com/static/img/coins/64x64/7083.png",
