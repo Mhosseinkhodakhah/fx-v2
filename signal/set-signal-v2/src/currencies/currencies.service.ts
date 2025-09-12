@@ -31,7 +31,7 @@ export class CurrenciesService {
                 CHANGEHOUR: mainData.CHANGEHOUR,
                 imgUrl: symbols[i]
             }
-            console.log('log after getting data from thirdparty service' , allData)
+            // console.log('log after getting data from thirdparty service' , allData)
         }
         await this.cacheManager.set('currencies', allData, 5)
     }
