@@ -14,7 +14,6 @@ import { RoleGaurdGuard } from 'src/role-gaurd/role-gaurd.guard';
 import { leaderLoginDto } from './dto/leaderLoginDTo.dto';
 
 
-
 @Controller('auth')
 export class UserController {
   constructor(private readonly userService: UserService) { }
@@ -79,7 +78,6 @@ export class UserController {
     // return profile
   }
 
-
   @Get('/leader/:leaderId')
   @Roles(0)
   @UseGuards(RoleGaurdGuard)
@@ -93,7 +91,6 @@ export class UserController {
   homePage(@Req() req: any, @Res() res: any) {
     return this.userService.getHomePageInfo(req, res)
   }
-
 
 
   @Get('/token/check')
@@ -124,6 +121,4 @@ export class UserController {
   subscribed(@Req() req :any, @Res() res:any, @Param('leaderId') leaderId: string) {
     return this.userService.subscribe(req, res, leaderId)
   }
-
-
 }

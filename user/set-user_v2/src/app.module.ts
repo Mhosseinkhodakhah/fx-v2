@@ -17,13 +17,14 @@ import { UserController } from './user/user.controller';
 import { APP_GUARD } from '@nestjs/core';
 import { RoleGaurdGuard } from './role-gaurd/role-gaurd.guard';
 
+
 @Module({
   imports: [UserModule ,
     MulterModule.register({dest : '/home/uploadedFiles'}),
     MailerModule.forRoot({
       transport: {
         host: 'smtp.gmail.com',
-        port: 587,
+        port: 465,
         secure: true,
         auth: {
           user: 'kianlucifer0098@gmail.com',
