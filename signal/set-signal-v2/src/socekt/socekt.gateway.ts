@@ -56,6 +56,7 @@ export class SocektGateway {
 
   @SubscribeMessage('currencies')
   async getAllCurrencies(client: Socket, payload: any){
+    console.log('this is fucking client' , client , payload)
     return this.socektService.getAllData(client , payload)
   }
 

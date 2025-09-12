@@ -255,7 +255,6 @@ export class SocektService {
   }
 
 
-
   /**
    * this is for validating user token for connecting to server
    * @param token 
