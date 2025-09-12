@@ -11,7 +11,6 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 
 
 
-
 @WebSocketGateway({ cors: true })
 @WebSocketGateway()
 export class SocektGateway {
@@ -71,6 +70,5 @@ export class SocektGateway {
   async checkTheSignals() {
     return this.socektService.emitNewData()
   }
-
   
 }

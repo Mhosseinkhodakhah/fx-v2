@@ -8,6 +8,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { SignalSchema } from './signal/entities/signal.entity';
 import { RabbitMqService } from './rabbit-mq/rabbit-mq.service';
 import { CacheModule } from '@nestjs/cache-manager';
+import { CurrenciesService } from './currencies/currencies.service';
 
 @Module({
   imports: [SocektModule, SignalModule,
@@ -17,6 +18,6 @@ import { CacheModule } from '@nestjs/cache-manager';
     SignalModule],  
   
   controllers: [AppController],
-  providers: [AppService, InterconnectionService, RabbitMqService],
+  providers: [AppService, InterconnectionService, RabbitMqService, CurrenciesService],
 })
 export class AppModule {}
