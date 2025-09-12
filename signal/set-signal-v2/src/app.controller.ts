@@ -12,7 +12,7 @@ export class AppController {
     setInterval(()=>{
       console.log('start cronjob')
       this.handleCronApi()
-    } , 1000*60*60)
+    } , 1000*60)
 
   }
 
