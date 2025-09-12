@@ -7,10 +7,12 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 export class AppController {
   constructor(private readonly appService: AppService , private readonly currenciApi : CurrenciesService) {
 
-    setInterval(()=>{
-      console.log('start cronjob')
-      this.handleCronApi()
-    } , 1000*60*5)
+    this.handleCronApi()
+
+    // setInterval(()=>{
+    //   console.log('start cronjob')
+    //   this.handleCronApi()
+    // } , 1000)
 
   }
 
