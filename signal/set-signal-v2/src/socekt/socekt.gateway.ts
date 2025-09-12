@@ -58,7 +58,7 @@ export class SocektGateway {
   async getAllCurrencies(client: Socket, payload: any){
     console.log('this is fucking client' , client.id , payload)
     // return this.socektService.getAllData(client , payload)
-    // let data = await this.socektService.getAllData()
+    let mainData = await this.socektService.getAllData()
     let data = [
       {
         symbol: 'BTC-USDT',
@@ -261,7 +261,7 @@ export class SocektGateway {
         imgUrl: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png'
       },
     ]
-    return this.server.to(client.id).emit('allCurrencies', { all: data })
+    return this.server.to(client.id).emit('allCurrencies', { all: mainData.length > 0 ? mainData : data })
   }
 
   
