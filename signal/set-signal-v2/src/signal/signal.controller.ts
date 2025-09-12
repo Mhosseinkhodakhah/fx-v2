@@ -6,16 +6,15 @@ import { UpdateSignalDto } from './dto/update-signal.dto';
 @Controller('signal')
 export class SignalController {
   constructor(private readonly signalService: SignalService) {}
-
+  
   @Post('signal/vip')
   create(@Res() res : any ,  @Req() req : any , @Body(new ValidationPipe()) body : CreateSignalDto){
     return this.signalService.createSignal(req , res , body)
   }
 
-
   @Post('signal/free')
   createFreeSignal(@Res() res : any ,  @Req() req : any , @Body(new ValidationPipe()) body : any){
     return this.signalService.createFreeSignal(req , res , body)
   }
-
+  
 }

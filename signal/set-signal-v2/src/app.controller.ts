@@ -10,10 +10,10 @@ export class AppController {
 
   @Cron(CronExpression.EVERY_10_SECONDS)
   async handleCronApi(){
-      await this.currenciApi.getAllCurrencies()
+    console.log('start cronjob')
+    await this.currenciApi.getAllCurrencies()
   }
 
-  
   @Get()
   getHello(): string {
     return this.appService.getHello();
