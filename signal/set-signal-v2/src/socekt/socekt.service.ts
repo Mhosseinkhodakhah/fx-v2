@@ -244,11 +244,14 @@ export class SocektService {
           }
         }
         await this.cacheManager.set('currencies', allData, 5)
-        return this.server.to(client.id).emit('allCurrencies', { all: allData })
+
+        return allData
+        // return this.server.to(client.id).emit('allCurrencies', { all: allData })
       }
     } catch (error) {
       console.log('error in getting all currency from socket', error)
-      return this.server.to(client.id).emit('allCurrencies', { error: error.MessageBody  })
+      return error.MessageBody
+      // return this.server.to(client.id).emit('allCurrencies', { error: error.MessageBody  })
     }
 
     // return allData  
