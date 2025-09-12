@@ -227,18 +227,20 @@ const clientId = socket.id;
 
         for (let i of Object.keys(symbols)) {
           const rawRespones = await fetch(`https://min-api.cryptocompare.com/data/pricemultifull?fsyms=${i}&tsyms=USD&api_key=e41af537fc81ded20a82b3a025c2923b6a6db4dda1ea05ee53e8be2d162a3fad`, { method: 'GET' });
-          const mainRes = await rawRespones.json()
-          let mainData = mainRes.RAW[i].USD
-          console.log('its for adding data , ' , i , mainData.price)
-          allData[i] = {
-            symbol : i,
-            price: mainData.PRICE,
-            lastVolume: mainData.LASTVOLUME,
-            OPENHOUR: mainData.OPENHOUR,
-            HIGHHOUR: mainData.HIGHHOUR,
-            LOWHOUR: mainData.LOWHOUR,
-            CHANGEHOUR: mainData.CHANGEHOUR,
-            imgUrl: symbols[i]
+          if (rawRespones.status == 200){
+            const mainRes = await rawRespones.json()
+            let mainData = mainRes.RAW[i].USD
+            console.log('its for adding data , ' , i , mainData.price)
+            allData[i] = {
+              symbol : i,
+              price: mainData.PRICE,
+              lastVolume: mainData.LASTVOLUME,
+              OPENHOUR: mainData.OPENHOUR,
+              HIGHHOUR: mainData.HIGHHOUR,
+              LOWHOUR: mainData.LOWHOUR,
+              CHANGEHOUR: mainData.CHANGEHOUR,
+              imgUrl: symbols[i]
+            }
           }
         }
         await this.cacheManager.set('currencies', allData, 5)
