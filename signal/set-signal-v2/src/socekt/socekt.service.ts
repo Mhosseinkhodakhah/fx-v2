@@ -230,7 +230,7 @@ const clientId = socket.id;
           if (rawRespones.status == 200){
             const mainRes = await rawRespones.json()
             let mainData = mainRes.RAW[i].USD
-            console.log('its for adding data , ' , i , mainData.price)
+            console.log('its for adding data , ' , i , mainData)
             allData[i] = {
               symbol : i,
               price: mainData.PRICE,
