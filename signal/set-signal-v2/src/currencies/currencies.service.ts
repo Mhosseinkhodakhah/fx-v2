@@ -46,7 +46,10 @@ export class CurrenciesService {
                         imgUrl: symbols[i]
                     })
                     console.log('log after getting data from thirdparty service' , mainData.RAW[i].USD)
+                }else{
+                    console.log('second cond is failed')
                 }
+                console.log('first cond is failed')
             }
         }
         await this.cacheManager.set('currencies', allData)
