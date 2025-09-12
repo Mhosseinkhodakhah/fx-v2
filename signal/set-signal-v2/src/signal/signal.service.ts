@@ -33,7 +33,7 @@ export class SignalService {
     body.firstLogo = new Photos().logos[currency1]
     body.secondLogo = new Photos().logos[currency2]
     const resault = await this.signalModel.create(body)
-    await this.socketService.refreshSignals(req.user._id)    
+    // await this.socketService.refreshSignals(req.user._id)    
     await this.eventService.updateSignal(body.signalName , body , 'create')
     // await this.f('add', resault)        its for calling tracer for trace the signals . . .
     return {
@@ -59,7 +59,7 @@ export class SignalService {
     console.log(currency2)
     const signal = await this.signalModel.create(body)
     // await this.f('add', signal)
-    await this.socketService.refreshSignals(req.user._id)
+    // await this.socketService.refreshSignals(req.user._id)
     await this.eventService.updateSignal(body.signalName , body , 'create')
     return {
       message : 'add free signal done!',
