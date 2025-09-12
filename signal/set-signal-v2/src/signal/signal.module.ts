@@ -7,7 +7,7 @@ import { SocektService } from 'src/socekt/socekt.service';
 import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
-  imports:[CacheModule.register(),MongooseModule.forRoot('mongodb+srv://kianlucifer0098:lucifer25255225@cluster0.p5b71z1.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'),
+  imports:[CacheModule.register(),MongooseModule.forRoot(process.env.MONGODBCONNECTIONURL || 'mongodb://localhost:27017/fx'),
       MongooseModule.forFeature([{ name: 'signal', schema: SignalSchema }])],
   controllers: [SignalController],
   providers: [SignalService , SocektService ],
