@@ -216,7 +216,7 @@ export class SocektService {
   }
 
 
-  async getAllData(client: Socket, payload: any) {
+  async getAllData() {
     try {
       const currencies = await this.cacheManager.get('lastPrices')
       if (currencies) {
