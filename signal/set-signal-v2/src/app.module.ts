@@ -10,10 +10,11 @@ import { RabbitMqService } from './rabbit-mq/rabbit-mq.service';
 import { CacheModule } from '@nestjs/cache-manager';
 import { CurrenciesService } from './currencies/currencies.service';
 import { ConfigService, ConfigModule } from '@nestjs/config'
-
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [SocektModule, SignalModule,
+    ScheduleModule.forRoot(),
     ConfigModule.forRoot({ envFilePath: '.env', isGlobal: true }),
     CacheModule.register(),
     MongooseModule.forRoot(process.env.MONGODBCONNECTIONURL || 'mongodb://localhost:27017/fx'),
