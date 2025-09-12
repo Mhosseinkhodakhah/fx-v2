@@ -16,8 +16,8 @@ export class CurrenciesService {
                 'X-CMC_PRO_API_KEY': apiToken,
             },
         });
-        console.log('resposne issss >>> ' , response.json())
-        console.log('resposne issss >>> ' , response.json())
+        console.log('resposne issss >>> ' , response)
+        console.log('resposne issss >>> ' , await response.json())
     }
 
 }
