@@ -28,25 +28,18 @@ export class SocektService {
   * @returns 
   */
   async handleConnection(socket: Socket) {
-    const clientId = socket.id;
+const clientId = socket.id;
     console.log('connection successfull')
-    const token = socket.handshake.headers.authorization
-    let tokenVerification = await this.#checkToken(token)
-
-    if (!tokenVerification) {
-      return this.server.to(socket.id).emit('allSignals', { error: 'token Expired!' })
-    }
-
-    const userData = await this.queryService.reqForGetUser(tokenVerification._id)
-    if (!userData.success) {
-      return this.server.to(socket.id).emit('allSignals', { error: 'token Expired!' })
-    }
-    this.connectedClients.set(socket.id, userData.data)
+    
+    // const token = socket.handshake.headers
+    // console.log('socket>>>>>>>>>>' , socket )
+    // const firstData = 
+    this.connectedClients.set(clientId , socket);
 
     socket.on('disconnect', () => {
-      console.log('user disconnected', clientId)
+      console.log('user disconnected' , clientId )
       this.connectedClients.delete(clientId);
-      console.log(this.connectedClients)
+    
     })
   }
 
