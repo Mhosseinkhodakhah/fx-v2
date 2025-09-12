@@ -23,7 +23,6 @@ export class CurrenciesService {
         //     console.log('قیمت لحظهای:', data.p);
         // };
 
-
         //  const client = SocketIoClient("http://localhost:3000")
         
         const symbols = {
@@ -35,20 +34,24 @@ export class CurrenciesService {
 
         for (let i of Object.keys(symbols)) {
             const rawRespones = await fetch(`https://min-api.cryptocompare.com/data/pricemultifull?fsyms=${i}&tsyms=USD&api_key=e41af537fc81ded20a82b3a025c2923b6a6db4dda1ea05ee53e8be2d162a3fad`, { method: 'GET' });
-            const mainRes = await rawRespones.json()
-            let mainData = mainRes.RAW[i].USD
-            allData[i] = {
-                price: mainData.PRICE,
-                lastVolume: mainData.LASTVOLUME,
-                OPENHOUR: mainData.OPENHOUR,
-                HIGHHOUR: mainData.HIGHHOUR,
-                LOWHOUR: mainData.LOWHOUR,
-                CHANGEHOUR: mainData.CHANGEHOUR,
-                imgUrl: symbols[i]
+            if (rawRespones.status == 200){
+                const mainRes = await rawRespones.json()
+                if (mainRes&& mainRes.RAW && mainRes.RAW[i] && mainRes.RAW[i].USD){
+                    let mainData = mainRes.RAW[i].USD
+                    allData[i] = {
+                        price: mainData.PRICE,
+                        lastVolume: mainData.LASTVOLUME,
+                        OPENHOUR: mainData.OPENHOUR,
+                        HIGHHOUR: mainData.HIGHHOUR,
+                        LOWHOUR: mainData.LOWHOUR,
+                        CHANGEHOUR: mainData.CHANGEHOUR,
+                        imgUrl: symbols[i]
+                    }
+                    console.log('log after getting data from thirdparty service' , allData)
+                }
             }
-            console.log('log after getting data from thirdparty service' , allData)
-        }
-        await this.cacheManager.set('currencies', allData, 5)
+            await this.cacheManager.set('currencies', allData)
+            }
     }
 
 }
