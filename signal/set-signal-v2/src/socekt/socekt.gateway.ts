@@ -58,7 +58,209 @@ export class SocektGateway {
   async getAllCurrencies(client: Socket, payload: any){
     console.log('this is fucking client' , client.id , payload)
     // return this.socektService.getAllData(client , payload)
-    let data = await this.socektService.getAllData()
+    // let data = await this.socektService.getAllData()
+    let data = [
+      {
+        symbol: 'BTC-USDT',
+        price: 114000,
+        lastVolume: 2582569,
+        OPENHOUR: 113600,
+        HIGHHOUR: 115000,
+        LOWHOUR: 113000,
+        CHANGEHOUR: 1560,
+        imgUrl: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png'
+      },
+      {
+        symbol: 'BTC-USDT',
+        price: 114000,
+        lastVolume: 2582569,
+        OPENHOUR: 113600,
+        HIGHHOUR: 115000,
+        LOWHOUR: 113000,
+        CHANGEHOUR: 1560,
+        imgUrl: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png'
+      },
+      {
+        symbol: 'BTC-USDT',
+        price: 114000,
+        lastVolume: 2582569,
+        OPENHOUR: 113600,
+        HIGHHOUR: 115000,
+        LOWHOUR: 113000,
+        CHANGEHOUR: 1560,
+        imgUrl: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png'
+      },
+      {
+        symbol: 'BTC-USDT',
+        price: 114000,
+        lastVolume: 2582569,
+        OPENHOUR: 113600,
+        HIGHHOUR: 115000,
+        LOWHOUR: 113000,
+        CHANGEHOUR: 1560,
+        imgUrl: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png'
+      },
+      {
+        symbol: 'BTC-USDT',
+        price: 114000,
+        lastVolume: 2582569,
+        OPENHOUR: 113600,
+        HIGHHOUR: 115000,
+        LOWHOUR: 113000,
+        CHANGEHOUR: 1560,
+        imgUrl: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png'
+      },
+      {
+        symbol: 'BTC-USDT',
+        price: 114000,
+        lastVolume: 2582569,
+        OPENHOUR: 113600,
+        HIGHHOUR: 115000,
+        LOWHOUR: 113000,
+        CHANGEHOUR: 1560,
+        imgUrl: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png'
+      },
+      {
+        symbol: 'BTC-USDT',
+        price: 114000,
+        lastVolume: 2582569,
+        OPENHOUR: 113600,
+        HIGHHOUR: 115000,
+        LOWHOUR: 113000,
+        CHANGEHOUR: 1560,
+        imgUrl: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png'
+      },
+      {
+        symbol: 'BTC-USDT',
+        price: 114000,
+        lastVolume: 2582569,
+        OPENHOUR: 113600,
+        HIGHHOUR: 115000,
+        LOWHOUR: 113000,
+        CHANGEHOUR: 1560,
+        imgUrl: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png'
+      },
+      {
+        symbol: 'BTC-USDT',
+        price: 114000,
+        lastVolume: 2582569,
+        OPENHOUR: 113600,
+        HIGHHOUR: 115000,
+        LOWHOUR: 113000,
+        CHANGEHOUR: 1560,
+        imgUrl: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png'
+      },
+      {
+        symbol: 'BTC-USDT',
+        price: 114000,
+        lastVolume: 2582569,
+        OPENHOUR: 113600,
+        HIGHHOUR: 115000,
+        LOWHOUR: 113000,
+        CHANGEHOUR: 1560,
+        imgUrl: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png'
+      },
+      {
+        symbol: 'BTC-USDT',
+        price: 114000,
+        lastVolume: 2582569,
+        OPENHOUR: 113600,
+        HIGHHOUR: 115000,
+        LOWHOUR: 113000,
+        CHANGEHOUR: 1560,
+        imgUrl: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png'
+      },
+      {
+        symbol: 'BTC-USDT',
+        price: 114000,
+        lastVolume: 2582569,
+        OPENHOUR: 113600,
+        HIGHHOUR: 115000,
+        LOWHOUR: 113000,
+        CHANGEHOUR: 1560,
+        imgUrl: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png'
+      },
+      {
+        symbol: 'BTC-USDT',
+        price: 114000,
+        lastVolume: 2582569,
+        OPENHOUR: 113600,
+        HIGHHOUR: 115000,
+        LOWHOUR: 113000,
+        CHANGEHOUR: 1560,
+        imgUrl: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png'
+      },
+      {
+        symbol: 'BTC-USDT',
+        price: 114000,
+        lastVolume: 2582569,
+        OPENHOUR: 113600,
+        HIGHHOUR: 115000,
+        LOWHOUR: 113000,
+        CHANGEHOUR: 1560,
+        imgUrl: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png'
+      },
+      {
+        symbol: 'BTC-USDT',
+        price: 114000,
+        lastVolume: 2582569,
+        OPENHOUR: 113600,
+        HIGHHOUR: 115000,
+        LOWHOUR: 113000,
+        CHANGEHOUR: 1560,
+        imgUrl: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png'
+      },
+      {
+        symbol: 'BTC-USDT',
+        price: 114000,
+        lastVolume: 2582569,
+        OPENHOUR: 113600,
+        HIGHHOUR: 115000,
+        LOWHOUR: 113000,
+        CHANGEHOUR: 1560,
+        imgUrl: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png'
+      },
+      {
+        symbol: 'BTC-USDT',
+        price: 114000,
+        lastVolume: 2582569,
+        OPENHOUR: 113600,
+        HIGHHOUR: 115000,
+        LOWHOUR: 113000,
+        CHANGEHOUR: 1560,
+        imgUrl: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png'
+      },
+      {
+        symbol: 'BTC-USDT',
+        price: 114000,
+        lastVolume: 2582569,
+        OPENHOUR: 113600,
+        HIGHHOUR: 115000,
+        LOWHOUR: 113000,
+        CHANGEHOUR: 1560,
+        imgUrl: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png'
+      },
+      {
+        symbol: 'BTC-USDT',
+        price: 114000,
+        lastVolume: 2582569,
+        OPENHOUR: 113600,
+        HIGHHOUR: 115000,
+        LOWHOUR: 113000,
+        CHANGEHOUR: 1560,
+        imgUrl: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png'
+      },
+      {
+        symbol: 'BTC-USDT',
+        price: 114000,
+        lastVolume: 2582569,
+        OPENHOUR: 113600,
+        HIGHHOUR: 115000,
+        LOWHOUR: 113000,
+        CHANGEHOUR: 1560,
+        imgUrl: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png'
+      },
+    ]
     return this.server.to(client.id).emit('allCurrencies', { all: data })
   }
 
