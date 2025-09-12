@@ -229,8 +229,8 @@ const clientId = socket.id;
           const rawRespones = await fetch(`https://min-api.cryptocompare.com/data/pricemultifull?fsyms=${i}&tsyms=USD&api_key=e41af537fc81ded20a82b3a025c2923b6a6db4dda1ea05ee53e8be2d162a3fad`, { method: 'GET' });
           if (rawRespones.status == 200){
             const mainRes = await rawRespones.json()
+            console.log('its for adding data , ' , i , mainRes)
             let mainData = mainRes.RAW
-            console.log('its for adding data , ' , i , mainData)
             allData[i] = {
               symbol : i,
               price: mainData.PRICE,
