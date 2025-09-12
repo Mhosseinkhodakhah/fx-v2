@@ -19,7 +19,7 @@ export class SocektGateway {
   constructor(private readonly socektService: SocektService,
     @InjectModel('signal') private signalModel : Model<signalInterFace>
   ) {}
-
+  
   
   /**
    * when user connected to server we cache the user detail here
@@ -51,6 +51,12 @@ export class SocektGateway {
   @SubscribeMessage('price')
   async chartPrice(client: Socket, payload: any) {
     return this.socektService.priceConnection(client , payload)
+  }
+
+
+  @SubscribeMessage('currencies')
+  async getAllCurrencies(client: Socket, payload: any){
+    return this.socektService.getAllData(client , payload)
   }
 
 
