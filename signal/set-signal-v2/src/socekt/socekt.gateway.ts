@@ -30,54 +30,55 @@ export class SocektGateway {
   }
 
 
-  /**
-   * collect and emit all signals for every user based on user's leaders
-   * @param client 
-   * @param payload 
-   * @returns 
-   */
-  @SubscribeMessage('getAllSignals')
-  async getAll(client : Socket , payload : any){
-    return this.socektService.getAllSignals(client , payload)
-  }
+  // /**
+  //  * collect and emit all signals for every user based on user's leaders
+  //  * @param client 
+  //  * @param payload 
+  //  * @returns 
+  //  */
+  // @SubscribeMessage('getAllSignals')
+  // async getAll(client : Socket , payload : any){
+  //   return this.socektService.getAllSignals(client , payload)
+  // }
 
 
-  /**
-   * emit the price of the every crypto that sent by user in payload
-   * @param client 
-   * @param payload 
-   * @returns 
-   */
-  @SubscribeMessage('price')
-  async chartPrice(client: Socket, payload: any) {
-    return this.socektService.priceConnection(client , payload)
-  }
+  // /**
+  //  * emit the price of the every crypto that sent by user in payload
+  //  * @param client 
+  //  * @param payload 
+  //  * @returns 
+  //  */
+  // @SubscribeMessage('price')
+  // async chartPrice(client: Socket, payload: any) {
+  //   return this.socektService.priceConnection(client , payload)
+  // }
 
 
   @SubscribeMessage('currencies')
   async getAllCurrencies(client: Socket, payload: any){
     console.log('this is fucking client' , client , payload)
     // return this.socektService.getAllData(client , payload)
-    let data = this.socektService.getAllData()
+    let data = await this.socektService.getAllData()
     return this.server.to(client.id).emit('allCurrencies', { all: data })
   }
 
+  
 
-  /**
-   * make the homepage data for user after comming to home page
-   * @param client 
-   * @param payload 
-   * @returns 
-   */
-  @SubscribeMessage('homePage')
-  async homePage(client: Socket, payload: any) {
-      return this.socektService.homePageConnection(client , payload)
-  }
+  // /**
+  //  * make the homepage data for user after comming to home page
+  //  * @param client 
+  //  * @param payload 
+  //  * @returns 
+  //  */
+  // @SubscribeMessage('homePage')
+  // async homePage(client: Socket, payload: any) {
+  //     return this.socektService.homePageConnection(client , payload)
+  // }
 
 
-  @Cron(CronExpression.EVERY_30_MINUTES)
-  async checkTheSignals() {
-    return this.socektService.emitNewData()
-  }
+  // @Cron(CronExpression.EVERY_30_MINUTES)
+  // async checkTheSignals() {
+  //   return this.socektService.emitNewData()
+  // }
   
 }
