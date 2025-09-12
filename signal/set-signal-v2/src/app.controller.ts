@@ -7,7 +7,7 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 export class AppController {
   constructor(private readonly appService: AppService , private readonly currenciApi : CurrenciesService) {
 
-    // this.handleCronApi()
+    this.handleCronApi()
 
     setInterval(()=>{
       console.log('start cronjob')
