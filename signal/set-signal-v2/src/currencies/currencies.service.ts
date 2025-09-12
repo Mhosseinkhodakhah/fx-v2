@@ -53,7 +53,7 @@ export class CurrenciesService {
         //     }
 
     }
-        const rawRespones = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=currencies&vs_currencies=usd`, { method: 'GET' });
+        const rawRespones = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${currencies}&vs_currencies=usd`, { method: 'GET' });
         let newResponse = await rawRespones.json()
         console.log('raw response' , newResponse)
         await this.cacheManager.set('currencies', allData)
