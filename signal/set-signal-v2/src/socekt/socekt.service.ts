@@ -211,7 +211,7 @@ const clientId = socket.id;
 
   async getAllData() {
     try {
-      const currencies = await this.cacheManager.get('lastPrices')
+      const currencies = await this.cacheManager.get('currencies')
       if (currencies) {
         console.log('first level')
         return currencies
